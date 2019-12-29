@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.HistoryListDao">
+
+    <resultMap id="historyListMap" type="HistoryListEntity" >
+        <id column="id" property="id"/>
+        <result column="isPlay" property="is_play" />
+        <association property="userId" column="user_id"
+                     javaType="com.zkl.l_music.dao.UserDao.selectById"/>
+        <association property="songId" column="song_id"
+                     javaType="com.zkl.l_music.dao.SongDao.selectById"/>
+    </resultMap>
+
+
+</mapper>

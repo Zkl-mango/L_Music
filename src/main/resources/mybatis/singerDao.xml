@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.SingerDao">
+
+    <resultMap id="singerMap" type="SingerEntity" >
+        <id column="id" property="id"/>
+        <result column="singer" property="singer" />
+        <result column="english_name" property="englishName" />
+        <result column="nationality" property="nationality" />
+        <result column="sex" property="sex" />
+        <result column="picture" property="picture" />
+        <result column="fans" property="fans" />
+        <result column="songs" property="songs" />
+        <result column="albums" property="albums" />
+    </resultMap>
+
+
+</mapper>

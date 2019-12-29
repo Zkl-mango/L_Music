@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.SongDetailsDao">
+
+    <resultMap id="songDetailsMap" type="SongDetailsEntity" >
+        <id column="id" property="id"/>
+        <result column="create_at" property="createAt" />
+        <result column="deleted" property="deleted" />
+        <association property="songList" column="song_list"
+                     javaType="com.zkl.l_music.dao.SongListDao.selectById"/>
+        <association property="songId" column="song_id"
+                     javaType="com.zkl.l_music.dao.SongDao.selectById"/>
+    </resultMap>
+
+</mapper>
