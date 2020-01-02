@@ -1,10 +1,13 @@
 package com.zkl.l_music.service;
 
+import com.zkl.l_music.Bo.UserBo;
 import com.zkl.l_music.entity.UserEntity;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface UserService {
 
-    boolean addUser(UserEntity userEntity);
+    boolean addUser(UserBo userBo, HttpServletRequest request);
 
     boolean updateUser(UserEntity userEntity);
 

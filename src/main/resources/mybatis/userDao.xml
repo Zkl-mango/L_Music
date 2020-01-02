@@ -7,6 +7,7 @@
         <id column="id" property="id"/>
         <result column="name" property="name" />
         <result column="password" property="password" />
+
         <result column="avatar" property="avatar" />
         <result column="follow" property="follow" />
     </resultMap>
