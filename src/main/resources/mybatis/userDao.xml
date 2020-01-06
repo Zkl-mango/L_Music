@@ -6,10 +6,14 @@
     <resultMap id="userMap" type="UserEntity" >
         <id column="id" property="id"/>
         <result column="name" property="name" />
+        <result column="phone" property="phone"/>
         <result column="password" property="password" />
-
         <result column="avatar" property="avatar" />
         <result column="follow" property="follow" />
     </resultMap>
 
+    <select id="selectUserByPhone" resultMap="userMap">
+        SELECT id,name,phone,password,avatar,follow FROM user
+        WHERE phone = #{phone};
+    </select>
 </mapper>

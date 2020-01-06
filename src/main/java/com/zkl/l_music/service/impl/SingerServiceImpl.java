@@ -24,8 +24,11 @@ public class SingerServiceImpl implements SingerService {
         return false;
     }
 
+    //flag:-1,取消关注;1,关注；
     @Override
-    public boolean updateSinger(SingerEntity singerEntity) {
+    public boolean updateSinger(String id,int flag) {
+        SingerEntity singerEntity = singerDao.selectById(id);
+        singerEntity.setFans(singerEntity.getFans()+flag);
         int res = singerDao.updateById(singerEntity);
         if(res == 1) {
             return true;

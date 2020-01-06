@@ -6,7 +6,7 @@ public interface SingerService {
 
     boolean addSinger(SingerEntity singerEntity);
 
-    boolean updateSinger(SingerEntity singerEntity);
+    boolean updateSinger(String id,int flag);
 
     boolean deleteSinger(String id);
 

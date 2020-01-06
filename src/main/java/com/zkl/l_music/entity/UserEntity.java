@@ -17,10 +17,9 @@ public class UserEntity implements Serializable {
     @TableId
     private String id;
     private String name;
+    private String phone;
     private String password;
     private String avatar;
-
-
     private String follow;      /*关注的歌手id*/
 
     public String getId() {
@@ -37,6 +36,14 @@ public class UserEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getPassword() {
@@ -65,9 +72,10 @@ public class UserEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserEntity{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
                 ", password='" + password + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", follow='" + follow + '\'' +
