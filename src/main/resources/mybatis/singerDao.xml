@@ -15,5 +15,16 @@
         <result column="albums" property="albums" />
     </resultMap>
 
+    <resultMap id="selectSingerList" type="com.zkl.l_music.vo.SingerListVo" >
+        <id column="id" property="id"/>
+        <result column="singer" property="singer" />
+        <result column="picture" property="picture" />
+    </resultMap>
+
+    <select id="selectSingerList" resultMap="singerListMap">
+        SELECT id,singer,picture FROM singer WHERE 1=1
+        <if test="sex!=null">AND sex = #{sex}</if>
+        ORDER BY fans DESC,singer;
+    </select>
 
 </mapper>
