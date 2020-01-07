@@ -2,9 +2,11 @@ package com.zkl.l_music.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.SingerService;
+import com.zkl.l_music.util.PageUtils;
 import com.zkl.l_music.vo.PageInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,13 +56,20 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
-    public PageInfoVo getSingers(Page page) {
+    public PageInfoVo getSingers(PageBo pageBo) {
+        Page page = new Page();
+        page.setSize(pageBo.getSize());
+        page.setCurrent(pageBo.getSize());
         IPage iPage = singerDao.selectSingerList(page,null);
-        return null;
+        return PageUtils.generatePageVo(iPage);
     }
 
     @Override
-    public PageInfoVo getSingersBySex(Page page, String sex) {
-        return null;
+    public PageInfoVo getSingersBySex(PageBo pageBo, String sex) {
+        Page page = new Page();
+        page.setSize(pageBo.getSize());
+        page.setCurrent(pageBo.getSize());
+        IPage iPage = singerDao.selectSingerList(page,sex);
+        return PageUtils.generatePageVo(iPage);
     }
 }

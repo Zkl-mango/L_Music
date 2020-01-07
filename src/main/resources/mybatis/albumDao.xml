@@ -12,5 +12,14 @@
                      javaType="com.zkl.l_music.dao.SingerDao.selectById"/>
     </resultMap>
 
+    <select id="selectAlbumsBySinger" resultMap="albumMap">
+        SELECT id,name,time,hot,singer_id FROM album
+        WHERE singer_id = #{singerId} ORDER BY time desc;
+    </select>
+
+    <select id="selectNewAlbums" resultMap="albumMap">
+        SELECT TOP 5 id,name,time,hot,singer_id FROM album
+        ORDER BY time desc;
+    </select>
 
 </mapper>
