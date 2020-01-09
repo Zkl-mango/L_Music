@@ -4,13 +4,15 @@ import com.zkl.l_music.entity.AlbumEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class SongVo {
 
     private String id;
 
     private String name;            /*歌曲名称*/
-    private SingerEntity singer;        /*歌手id*/
+    private List<SingerEntity> singerList;        /*歌手id*/
     private AlbumEntity album;         /*所属专辑id*/
     private String link;            /*歌曲连接*/
     private String picture;         /*歌曲封面*/

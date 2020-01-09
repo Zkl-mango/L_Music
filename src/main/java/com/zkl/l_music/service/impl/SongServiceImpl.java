@@ -1,14 +1,24 @@
 package com.zkl.l_music.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zkl.l_music.bo.PageBo;
+import com.zkl.l_music.dao.AlbumDao;
+import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.dao.SongDao;
+import com.zkl.l_music.entity.AlbumEntity;
+import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.SongEntity;
 import com.zkl.l_music.service.SongService;
+import com.zkl.l_music.util.PageUtils;
 import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +27,10 @@ public class SongServiceImpl implements SongService {
 
     @Resource
     SongDao songDao;
+    @Resource
+    AlbumDao albumDao;
+    @Resource
+    SingerDao singerDao;
 
     @Override
     public boolean addSong(SongEntity songEntity) {
@@ -62,16 +76,49 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public List<SongVo> getSongsByAlbum(String albumId) {
-        return null;
+        List<SongEntity> list = songDao.selectSongsByAlbum(albumId);
+        List<SongVo> songVoList = this.songDetails(list);
+        return songVoList;
     }
 
     @Override
-    public PageInfoVo getSongsByCategory(int category) {
-        return null;
+    public PageInfoVo getSongsByCategory(PageBo pageBo,int category) {
+        Page page = new Page(pageBo.getPage(),pageBo.getSize());
+        IPage iPage = songDao.selectSongsByCategory(page,category);
+        List<SongEntity> list = iPage.getRecords();
+        List<SongVo> songVoList = this.songDetails(list);
+        iPage.setRecords(songVoList);
+        return PageUtils.generatePageVo(iPage);
     }
 
     @Override
-    public PageInfoVo getSongsBySinger(String SingerId) {
-        return null;
+    public PageInfoVo getSongsBySinger(PageBo pageBo,String singerId) {
+        Page page = new Page(pageBo.getPage(),pageBo.getSize());
+        IPage iPage = songDao.selectSongsBySinger(page,singerId);
+        List<SongEntity> list = iPage.getRecords();
+        List<SongVo> songVoList = this.songDetails(list);
+        iPage.setRecords(songVoList);
+        return PageUtils.generatePageVo(iPage);
+    }
+
+    //获取歌曲详细信息，转换成对应的VO
+    private List<SongVo> songDetails(List<SongEntity> list) {
+        List<SongVo> songVoList = new ArrayList<>();
+        List<SingerEntity> singerList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            SongVo songVo = new SongVo();
+            SongEntity songEntity = list.get(i);
+            String[] str = songEntity.getSingerId().split(",");
+            BeanUtils.copyProperties(songVo, songEntity);
+            for (String singerId : str) {
+                SingerEntity singerEntity = singerDao.selectById(singerId);
+                singerList.add(singerEntity);
+            }
+            AlbumEntity albumEntity = albumDao.selectById(list.get(i).getAlbumId());
+            songVo.setAlbum(albumEntity);
+            songVo.setSingerList(singerList);
+            songVoList.add(songVo);
+        }
+        return songVoList;
     }
 }

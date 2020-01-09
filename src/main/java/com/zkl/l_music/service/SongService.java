@@ -1,5 +1,6 @@
 package com.zkl.l_music.service;
 
+import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.SongEntity;
 import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SongVo;
@@ -16,9 +17,24 @@ public interface SongService {
 
     SongVo getSongById(String id);
 
+    /**
+     * 根据专辑获取专辑下的所有歌曲
+     * @param albumId
+     * @return
+     */
     List<SongVo> getSongsByAlbum(String albumId);
 
-    PageInfoVo getSongsByCategory(int category);
+    /**
+     * 获取某个类别下的所有歌曲（分页）
+     * @param category
+     * @return
+     */
+    PageInfoVo getSongsByCategory(PageBo pageBo,int category);
 
-    PageInfoVo getSongsBySinger(String SingerId);
+    /**
+     * 获取某个歌手的所有歌曲（分页）
+     * @param SingerId
+     * @return
+     */
+    PageInfoVo getSongsBySinger(PageBo pageBo,String SingerId);
 }
