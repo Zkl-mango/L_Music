@@ -27,7 +27,6 @@ public class SongEntity implements Serializable {
     private int category;           /*歌曲类别*/
     private int hot;                /*歌曲热度*/
     private int recommend;          /*歌曲评论数*/
-    private int increase;           /*歌曲被添加次数*/
 
     public String getId() {
         return id;
@@ -117,14 +116,6 @@ public class SongEntity implements Serializable {
         this.recommend = recommend;
     }
 
-    public int getIncrease() {
-        return increase;
-    }
-
-    public void setIncrease(int increase) {
-        this.increase = increase;
-    }
-
     @Override
     public String toString() {
         return "SongEntity{" +
@@ -139,7 +130,6 @@ public class SongEntity implements Serializable {
                 ", category=" + category +
                 ", hot=" + hot +
                 ", recommend=" + recommend +
-                ", increase=" + increase +
                 '}';
     }
 }

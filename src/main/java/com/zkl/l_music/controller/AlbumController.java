@@ -3,6 +3,7 @@ package com.zkl.l_music.controller;
 import com.zkl.l_music.service.AlbumService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
+import com.zkl.l_music.vo.AlbumDetailVo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,16 @@ public class AlbumController {
     public ResponseEntity getNewAlbums() {
         List list = albumService.getNewAlbums();
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+    }
+
+    /**
+     * 获取专辑信息详情
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    public ResponseEntity getAlbumById(@PathVariable String id) {
+        AlbumDetailVo albumDetailVo = albumService.getAlbumById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(albumDetailVo));
     }
 }

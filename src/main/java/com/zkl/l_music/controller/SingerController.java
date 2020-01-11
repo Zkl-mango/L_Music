@@ -5,6 +5,7 @@ import com.zkl.l_music.service.SingerService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.PageInfoVo;
+import com.zkl.l_music.vo.SingerDetailVo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,5 +63,16 @@ public class SingerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageInfoVo));
     }
 
+    /**
+     * 获取歌曲详情
+     * @param id
+     * @param pageBo
+     * @return
+     */
+    @GetMapping(value = "/{id}")
+    public ResponseEntity getSingerById(@PathVariable String id,@RequestBody @Valid PageBo pageBo) {
+        SingerDetailVo singerDetailVo = singerService.getSingerById(id,pageBo);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(singerDetailVo));
+    }
 
 }

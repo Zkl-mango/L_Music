@@ -5,8 +5,13 @@ import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.entity.AlbumEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.AlbumService;
+import com.zkl.l_music.service.SongService;
 import com.zkl.l_music.util.UUIDGenerator;
+import com.zkl.l_music.vo.AlbumDetailVo;
+import com.zkl.l_music.vo.PageInfoVo;
+import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,6 +25,8 @@ public class AlbumServiceImpl implements AlbumService {
     AlbumDao albumDao;
     @Resource
     SingerDao singerDao;
+    @Resource
+    SongService songService;
 
     @Override
     public boolean addAlbum(AlbumEntity albumEntity) {
@@ -55,8 +62,16 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public AlbumEntity getAlbumById(String id) {
-        return albumDao.selectById(id);
+    public AlbumDetailVo getAlbumById(String id) {
+        AlbumEntity albumEntity = albumDao.selectById(id);
+        AlbumDetailVo albumDetailVo = new AlbumDetailVo();
+        BeanUtils.copyProperties(albumDetailVo,albumEntity);
+        if(albumEntity == null) {
+            return null;
+        }
+        List<SongVo> songVoList = songService.getSongsByAlbum(albumEntity.getId());
+        albumDetailVo.setSongVoList(songVoList);
+        return albumDetailVo;
     }
 
     /**

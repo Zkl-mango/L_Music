@@ -11,7 +11,7 @@ public interface SongService {
 
     boolean addSong(SongEntity songEntity);
 
-    boolean updateSong(String id,int hot,int recommend,int increase);
+    boolean updateSong(String id,int hot,int recommend);
 
     boolean deleteSong(String id);
 

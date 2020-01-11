@@ -42,16 +42,17 @@ public class SongServiceImpl implements SongService {
     }
 
     //hot,increase:1添加，-1取消，0不更改
-    //recommend：1推荐，0不推荐
+    //recommend：1推荐，0不推荐,-1不修改
     @Override
-    public boolean updateSong(String id,int hot,int recommend,int increase) {
+    public boolean updateSong(String id,int hot,int recommend) {
         SongEntity songEntity = songDao.selectById(id);
         if(songEntity == null) {
             return false;
         }
         songEntity.setHot(songEntity.getHot()+hot);
-        songEntity.setIncrease(songEntity.getIncrease()+increase);
-        songEntity.setRecommend(recommend);
+        if(recommend != -1) {
+            songEntity.setRecommend(recommend);
+        }
         int res = songDao.updateById(songEntity);
         if(res == 1) {
             return true;
@@ -70,8 +71,12 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public SongVo getSongById(String id) {
-         songDao.selectById(id);
-         return null;
+         SongEntity songEntity = songDao.selectById(id);
+         if(songEntity == null) {
+             return null;
+         }
+         SongVo songVo = this.songChangeVo(songEntity);
+         return songVo;
     }
 
     @Override
@@ -104,21 +109,25 @@ public class SongServiceImpl implements SongService {
     //获取歌曲详细信息，转换成对应的VO
     private List<SongVo> songDetails(List<SongEntity> list) {
         List<SongVo> songVoList = new ArrayList<>();
-        List<SingerEntity> singerList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            SongVo songVo = new SongVo();
-            SongEntity songEntity = list.get(i);
-            String[] str = songEntity.getSingerId().split(",");
-            BeanUtils.copyProperties(songVo, songEntity);
-            for (String singerId : str) {
-                SingerEntity singerEntity = singerDao.selectById(singerId);
-                singerList.add(singerEntity);
-            }
-            AlbumEntity albumEntity = albumDao.selectById(list.get(i).getAlbumId());
-            songVo.setAlbum(albumEntity);
-            songVo.setSingerList(singerList);
+            SongVo songVo = this.songChangeVo(list.get(i));
             songVoList.add(songVo);
         }
         return songVoList;
+    }
+
+    private SongVo songChangeVo(SongEntity songEntity) {
+        List<SingerEntity> singerList = new ArrayList<>();
+        SongVo songVo = new SongVo();
+        String[] str = songEntity.getSingerId().split(",");
+        BeanUtils.copyProperties(songVo, songEntity);
+        for (String singerId : str) {
+            SingerEntity singerEntity = singerDao.selectById(singerId);
+            singerList.add(singerEntity);
+        }
+        AlbumEntity albumEntity = albumDao.selectById(songEntity.getAlbumId());
+        songVo.setAlbum(albumEntity);
+        songVo.setSingerList(singerList);
+        return songVo;
     }
 }
