@@ -4,6 +4,14 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zkl.l_music.entity.SongDetailsEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface SongDetailsDao extends BaseMapper<SongDetailsEntity> {
+
+    boolean deleteSongDetailsByListId(String songList);
+
+    List<SongDetailsEntity> selectSongDetailsByListId(String songList);
+
+
 }

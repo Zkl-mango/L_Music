@@ -5,12 +5,16 @@
 
     <resultMap id="historyListMap" type="HistoryListEntity" >
         <id column="id" property="id"/>
-        <result column="isPlay" property="is_play" />
+        <result column="time" property="time" />
         <association property="userId" column="user_id"
                      javaType="com.zkl.l_music.dao.UserDao.selectById"/>
         <association property="songId" column="song_id"
                      javaType="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
+    <select id="selectHistorysByUser" resultMap="historyListMap">
+        SELECT TOP 50 id,time,user_id,song_id FROM history_list
+        WHERE user_id = #{userId} ORDER BY time desc;
+    </select>
 
 </mapper>

@@ -1,14 +1,23 @@
 package com.zkl.l_music.service;
 
+import com.zkl.l_music.bo.CommentsBo;
+import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.CommentsEntity;
+import com.zkl.l_music.entity.UserEntity;
+import com.zkl.l_music.vo.CommentsVo;
+
+import java.util.List;
 
 public interface CommentsService {
 
-    boolean addComments(CommentsEntity commentsEntity);
+    boolean addComments(CommentsBo commentsBo, UserEntity userEntity);
 
-    boolean updateComments(CommentsEntity commentsEntity);
+    boolean updateCommentsLike(String id);
 
-    boolean deleteComments(String id);
+    boolean deleteComments(String id, String userId);
 
     CommentsEntity getCommentById(String id);
+
+    CommentsVo getCommentsBySong(PageBo page, String songId);
+
 }

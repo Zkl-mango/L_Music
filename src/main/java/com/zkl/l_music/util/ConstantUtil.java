@@ -12,4 +12,7 @@ public class ConstantUtil {
 
     public final static String parameterNull = "输入的参数为空";
     public final static String resultIsNull = "找不到对应的结果";
+
+    public final static int STATUS_DELETE = 1;
+    public final static int STATUS_SUCCESS = 0;
 }

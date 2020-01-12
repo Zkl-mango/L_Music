@@ -13,4 +13,13 @@
                      javaType="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
+    <delete id="deleteSongDetailsByListId" parameterType="String">
+        DELETE FROM song_details WHERE song_list = #{songList};
+    </delete>
+
+    <select id="selectSongDetailsByListId" resultMap="songDetailsMap">
+        SELECT id,create_at,deleted,song_list,song_id FROM song_detials
+        WHERE song_list = #{songList} AND deleted=0 ORDER BY create_at desc;
+    </select>
+
 </mapper>

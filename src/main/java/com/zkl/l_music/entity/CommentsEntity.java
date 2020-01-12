@@ -27,6 +27,7 @@ public class CommentsEntity implements Serializable {
     private int likes;          /*点赞数*/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date time;          /*评论时间*/
+    private int isHot;          /*是否为热度展示,0否，1是*/
 
     public String getId() {
         return id;
@@ -76,6 +77,14 @@ public class CommentsEntity implements Serializable {
         this.time = time;
     }
 
+    public int getIsHot() {
+        return isHot;
+    }
+
+    public void setIsHot(int isHot) {
+        this.isHot = isHot;
+    }
+
     @Override
     public String toString() {
         return "CommentsEntity{" +
@@ -85,6 +94,7 @@ public class CommentsEntity implements Serializable {
                 ", songId=" + songId +
                 ", likes=" + likes +
                 ", time=" + time +
+                ", isHot=" + isHot +
                 '}';
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -49,7 +50,7 @@ public class SongController {
      * @return
      */
     @GetMapping("/singer/{singerId}")
-    public ResponseEntity getSongsBySinger(@PathVariable String singerId, @RequestBody PageBo pageBo) {
+    public ResponseEntity getSongsBySinger(@PathVariable String singerId, @RequestBody @Valid PageBo pageBo) {
         PageInfoVo pageInfoVo = songService.getSongsBySinger(pageBo,singerId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageInfoVo));
     }
@@ -72,7 +73,7 @@ public class SongController {
      * @return
      */
     @GetMapping("/category/{type}")
-    public ResponseEntity getSongsByCategory(@PathVariable int type, @RequestBody PageBo pageBo) {
+    public ResponseEntity getSongsByCategory(@PathVariable int type, @RequestBody @Valid PageBo pageBo) {
         PageInfoVo pageInfoVo = songService.getSongsByCategory(pageBo,type);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageInfoVo));
     }

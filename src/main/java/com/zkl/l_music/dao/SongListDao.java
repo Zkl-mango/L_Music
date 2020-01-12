@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zkl.l_music.entity.SongListEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface SongListDao extends BaseMapper<SongListEntity> {
+
+    List<SongListEntity> selectSongListByUser(String userId);
 }

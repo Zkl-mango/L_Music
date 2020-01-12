@@ -11,4 +11,9 @@
                      javaType="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
 
+    <select id="selectSongListByUser" resultMap="songListMap">
+        SELECT id,list_name,category,user_id FROM song_list
+        WHERE user_id = #{userId};
+    </select>
+
 </mapper>
