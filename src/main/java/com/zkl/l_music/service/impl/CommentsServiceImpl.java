@@ -50,12 +50,12 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
-    public boolean updateCommentsLike(String id) {
+    public boolean updateCommentsLike(String id,int type) {
         CommentsEntity commentsEntity = commentsDao.selectById(id);
         if(commentsEntity == null) {
             return false;
         }
-        commentsEntity.setLikes(commentsEntity.getLikes()+1);
+        commentsEntity.setLikes(commentsEntity.getLikes()+type);
         int res = commentsDao.updateById(commentsEntity);
         if( res == 1) {
             return true;

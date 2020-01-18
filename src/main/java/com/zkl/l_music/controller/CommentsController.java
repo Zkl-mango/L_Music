@@ -47,14 +47,18 @@ public class CommentsController {
 
     /**
      * 更新点赞
+     * @param type -1,取消点赞；1点赞
      * @param id
      * @return
      */
-    @PutMapping(value = "/{id}")
-    public ResponseEntity updateComments(@PathVariable String id) {
-        boolean res = commentsService.updateCommentsLike(id);
+    @PutMapping(value = "/{id}/{type}")
+    public ResponseEntity updateComments(@PathVariable String id,@PathVariable int type) {
+        boolean res = commentsService.updateCommentsLike(id,type);
         if(res) {
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("点赞成功"));
+            if (type == 1) {
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("点赞成功"));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消点赞成功"));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
     }

@@ -12,7 +12,7 @@ public interface CommentsService {
 
     boolean addComments(CommentsBo commentsBo, UserEntity userEntity);
 
-    boolean updateCommentsLike(String id);
+    boolean updateCommentsLike(String id,int type);
 
     boolean deleteComments(String id, String userId);
 
