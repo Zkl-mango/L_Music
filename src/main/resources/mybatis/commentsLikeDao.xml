@@ -8,11 +8,13 @@
         <result column="status" property="status" />
         <association property="userId" column="user_id"
                      javaType="com.zkl.l_music.dao.UserDao.selectById"/>
-        <association property="postId" column="post_id"
-                     javaType="com.zkl.l_music.dao.UserDao.selectById"/>
         <association property="commentId" column="comment_id"
                      javaType="com.zkl.l_music.dao.CommentsDao.selectById"/>
     </resultMap>
 
+    <select id="selectCommentsLike" resultMap="commentsLikeMap" >
+        SELECT id,status,user_id,comment_id FROM comments_like
+        WHERE user_id = #{userId} and comment_id = #{commentId};
+    </select>
 
 </mapper>

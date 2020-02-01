@@ -1,5 +1,6 @@
 package com.zkl.l_music.util;
 
+import com.zkl.l_music.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,9 +31,17 @@ public class RequestHolder {
      * 获取当前请求用户的信息
      * @return
      */
-    public static String getUserRequest() {
+    public static UserEntity getUserEntityRequest() {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-        return (String)request.getAttribute("user");
+        return (UserEntity) request.getSession().getAttribute("userEntity");
     }
 
+    /**
+     * 获取当前请求用户id
+     * @return
+     */
+    public static String getUserRequest() {
+        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
+        return (String)request.getAttribute("userId");
+    }
 }

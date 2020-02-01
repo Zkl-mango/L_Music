@@ -14,10 +14,14 @@ public interface CommentsService {
 
     boolean updateCommentsLike(String id,int type);
 
+    //批量更新redis中的点赞数
+    boolean updateCommentsLikeRedis(List<CommentsEntity> list);
+
     boolean deleteComments(String id, String userId);
 
     CommentsEntity getCommentById(String id);
 
     CommentsVo getCommentsBySong(PageBo page, String songId);
+
 
 }

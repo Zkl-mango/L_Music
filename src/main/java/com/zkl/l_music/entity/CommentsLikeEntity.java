@@ -18,7 +18,6 @@ public class CommentsLikeEntity implements Serializable {
     private String id;
 
     private UserEntity userId;
-    private UserEntity postId;
     private CommentsEntity commentId;
     private int status;
 
@@ -36,14 +35,6 @@ public class CommentsLikeEntity implements Serializable {
 
     public void setUserId(UserEntity userId) {
         this.userId = userId;
-    }
-
-    public UserEntity getPostId() {
-        return postId;
-    }
-
-    public void setPostId(UserEntity postId) {
-        this.postId = postId;
     }
 
     public CommentsEntity getCommentId() {
@@ -67,7 +58,6 @@ public class CommentsLikeEntity implements Serializable {
         return "CommentsLikeEntity{" +
                 "id='" + id + '\'' +
                 ", userId=" + userId +
-                ", postId=" + postId +
                 ", commentId=" + commentId +
                 ", status=" + status +
                 '}';

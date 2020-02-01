@@ -29,6 +29,7 @@ public class CommentsEntity implements Serializable {
     private Date time;          /*评论时间*/
     private int isHot;          /*是否为热度展示,0否，1是*/
 
+
     public String getId() {
         return id;
     }

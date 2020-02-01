@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class CommentsVo implements Serializable {
 
-    List<CommentsEntity> commentsEntityList;
+    List<CommentsDetailVo> commentsEntityList;
     PageInfoVo commentsPage;
 
 }

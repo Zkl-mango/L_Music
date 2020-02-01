@@ -8,17 +8,14 @@ public class RedisKeyUtils {
     public static final String MAP_KEY_COMMENT_LIKED_COUNT = "MAP_COMMENT_LIKED_COUNT";
 
     /**
-     * 拼接被点赞的用户id和点赞的人的id作为key。格式 222222::333333::44444
-     * @param likedUserId 被点赞的人id
-     * @param likedPostId 点赞的人的id
+     * 拼接被点赞的用户id和点赞的人的id作为key。格式 222222::333333
+     * @param likedUserId 点赞的人id
      * @param commendId 评论的id
      * @return
      */
-    public static String getLikedKey(String likedUserId, String likedPostId,String commendId){
+    public static String getLikedKey(String likedUserId,String commendId){
         StringBuilder builder = new StringBuilder();
         builder.append(likedUserId);
-        builder.append("::");
-        builder.append(likedPostId);
         builder.append("::");
         builder.append(commendId);
         return builder.toString();
