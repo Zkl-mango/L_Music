@@ -26,7 +26,7 @@ public class AlbumController {
      */
     @PutMapping(value="/{id}")
     public ResponseEntity updateSinger(@PathVariable String id, int flag) {
-        boolean res = albumService.updateAlbum(id,flag);
+        boolean res = albumService.updateAlbumByFlag(id,flag);
         if(res) {
             if(flag == -1) {
                 return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消收藏成功"));

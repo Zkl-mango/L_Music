@@ -8,7 +8,8 @@
         <result column="list_name" property="listName" />
         <result column="category" property="category" />
         <association property="userId" column="user_id"
-                     javaType="com.zkl.l_music.dao.UserDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.UserEntity"
+                     select="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
 
     <select id="selectSongListByUser" resultMap="songListMap">

@@ -7,9 +7,11 @@
         <id column="id" property="id"/>
         <result column="time" property="time" />
         <association property="userId" column="user_id"
-                     javaType="com.zkl.l_music.dao.UserDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.UserEntity"
+                     select="com.zkl.l_music.dao.UserDao.selectById"/>
         <association property="songId" column="song_id"
-                     javaType="com.zkl.l_music.dao.SongDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.SongEntity"
+                     select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
     <select id="selectHistorysByUser" resultMap="historyListMap">

@@ -1,6 +1,9 @@
-package com.zkl.l_music.config;
+package com.zkl.l_music.util;
 
-public class AvatarConfig {
+import org.springframework.stereotype.Component;
+
+@Component("AvatarConstant")
+public class AvatarConstant {
 
     private String uploadPath="";
 

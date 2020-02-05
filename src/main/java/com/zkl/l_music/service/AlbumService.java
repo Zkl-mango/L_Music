@@ -9,11 +9,15 @@ public interface AlbumService {
 
     boolean addAlbum(AlbumEntity albumEntity);
 
-    boolean updateAlbum(String id,int flag);
+    boolean updateAlbumByFlag(String id,int flag);
+
+    boolean updateAlbum(AlbumEntity albumEntity);
 
     boolean deleteAlbum(String id);
 
     AlbumDetailVo getAlbumById(String id);
+
+    AlbumEntity getAlbumEntityById(String id);
 
     List<AlbumEntity> getAlbumsBySinger(String singerId);
 

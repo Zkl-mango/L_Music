@@ -39,12 +39,21 @@ public class AlbumServiceImpl implements AlbumService {
 
     //flag:-1,取消收藏;1,收藏；
     @Override
-    public boolean updateAlbum(String id,int flag) {
+    public boolean updateAlbumByFlag(String id,int flag) {
         AlbumEntity albumEntity = albumDao.selectById(id);
         if(albumEntity==null) {
             return false;
         }
         albumEntity.setHot(albumEntity.getHot()+flag);
+        int res = albumDao.updateById(albumEntity);
+        if(res == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateAlbum(AlbumEntity albumEntity) {
         int res = albumDao.updateById(albumEntity);
         if(res == 1) {
             return true;
@@ -72,6 +81,11 @@ public class AlbumServiceImpl implements AlbumService {
         List<SongVo> songVoList = songService.getSongsByAlbum(albumEntity.getId());
         albumDetailVo.setSongVoList(songVoList);
         return albumDetailVo;
+    }
+
+    @Override
+    public AlbumEntity getAlbumEntityById(String id) {
+        return albumDao.selectById(id);
     }
 
     /**

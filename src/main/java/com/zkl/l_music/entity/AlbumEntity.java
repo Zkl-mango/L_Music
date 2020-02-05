@@ -21,10 +21,13 @@ public class AlbumEntity implements Serializable {
 
     private SingerEntity singerId;
     private String name;
-
+    private String picture;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date time;      /*发表时间*/
     private int hot;        /*热度*/
+    private String type;    /*类型*/
+    private int songs;      /*歌曲数*/
+    private String singerList;      /*多个歌手的id集合*/
 
     public String getId() {
         return id;
@@ -66,14 +69,50 @@ public class AlbumEntity implements Serializable {
         this.hot = hot;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getSongs() {
+        return songs;
+    }
+
+    public void setSongs(int songs) {
+        this.songs = songs;
+    }
+
+    public String getSingerList() {
+        return singerList;
+    }
+
+    public void setSingerList(String singerList) {
+        this.singerList = singerList;
+    }
+
     @Override
     public String toString() {
         return "AlbumEntity{" +
                 "id='" + id + '\'' +
                 ", singerId=" + singerId +
                 ", name='" + name + '\'' +
+                ", picture='" + picture + '\'' +
                 ", time=" + time +
                 ", hot=" + hot +
+                ", type='" + type + '\'' +
+                ", songs=" + songs +
+                ", singerList='" + singerList + '\'' +
                 '}';
     }
 }

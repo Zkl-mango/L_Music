@@ -2,17 +2,13 @@ package com.zkl.l_music.service.impl;
 
 import com.zkl.l_music.bo.UserBo;
 import com.zkl.l_music.bo.UserPwdBo;
-import com.zkl.l_music.config.AvatarConfig;
 import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.dto.FollowsDto;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.UserService;
-import com.zkl.l_music.util.ConstantUtil;
-import com.zkl.l_music.util.HandleAvatarUtil;
-import com.zkl.l_music.util.SecurityUtil;
-import com.zkl.l_music.util.UUIDGenerator;
+import com.zkl.l_music.util.*;
 import com.zkl.l_music.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +33,7 @@ public class UserServiceImpl implements UserService {
     UUIDGenerator uuidGenerator;
 
     @Resource
-    private AvatarConfig avatarConfig;
+    private AvatarConstant avatarConstant;
 
     @Override
     public boolean addUser(UserBo userBo, HttpServletRequest request) throws Exception {
@@ -51,7 +47,7 @@ public class UserServiceImpl implements UserService {
         String image = userBo.getAvatar();
         String avatar = ConstantUtil.avatar;
         if(!StringUtils.isBlank(image)) {
-            avatar = HandleAvatarUtil.save(image, request, avatarConfig.getUploadPath());
+            avatar = HandleAvatarUtil.save(image, request, avatarConstant.getUploadPath());
         }
         userEntity.setAvatar(avatar);
         log.info("处理头像信息结束-----");
@@ -73,7 +69,7 @@ public class UserServiceImpl implements UserService {
         if(userBo.getAvatar()!=null) {
             log.info("开始更新头像信息-----");
             String image = userBo.getAvatar();
-            String avatar = HandleAvatarUtil.save(image, request, avatarConfig.getUploadPath());
+            String avatar = HandleAvatarUtil.save(image, request, avatarConstant.getUploadPath());
             userEntity.setAvatar(avatar);
             log.info("更新头像信息结束-----");
         }

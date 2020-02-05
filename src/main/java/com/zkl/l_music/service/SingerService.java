@@ -6,6 +6,8 @@ import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SingerDetailVo;
 
+import java.util.List;
+
 public interface SingerService {
 
     boolean addSinger(SingerEntity singerEntity);
@@ -19,4 +21,6 @@ public interface SingerService {
     PageInfoVo getSingers(PageBo pageBo);
 
     PageInfoVo getSingersBySex(PageBo pageBo,String sex);
+
+    List<SingerEntity> getSingerByCategory(int category);
 }

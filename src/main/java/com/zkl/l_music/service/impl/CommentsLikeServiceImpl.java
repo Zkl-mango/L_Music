@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -119,6 +120,7 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     }
 
     @Override
+    @Transactional
     public void getLikedsFromRedisToDB() {
         List<CommentsLikeEntity> list = this.getLikedDataFromRedis();
         for(int i=0;i<list.size();i++) {

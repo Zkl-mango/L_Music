@@ -98,4 +98,9 @@ public class SingerServiceImpl implements SingerService {
         IPage iPage = singerDao.selectSingerList(page,sex);
         return PageUtils.generatePageVo(iPage);
     }
+
+    @Override
+    public List<SingerEntity> getSingerByCategory(int category) {
+        return singerDao.selectSingerByCat(category);
+    }
 }

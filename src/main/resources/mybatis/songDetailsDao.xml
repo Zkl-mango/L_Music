@@ -8,9 +8,11 @@
         <result column="create_at" property="createAt" />
         <result column="deleted" property="deleted" />
         <association property="songList" column="song_list"
-                     javaType="com.zkl.l_music.dao.SongListDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.SongListEntity"
+                     select="com.zkl.l_music.dao.SongListDao.selectById"/>
         <association property="songId" column="song_id"
-                     javaType="com.zkl.l_music.dao.SongDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.SongEntity"
+                     select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
     <delete id="deleteSongDetailsByListId" parameterType="String">

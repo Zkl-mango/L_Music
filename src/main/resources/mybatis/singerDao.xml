@@ -13,9 +13,10 @@
         <result column="fans" property="fans" />
         <result column="songs" property="songs" />
         <result column="albums" property="albums" />
+        <result column="category" property="category" />
     </resultMap>
 
-    <resultMap id="selectSingerList" type="com.zkl.l_music.vo.SingerListVo" >
+    <resultMap id="singerListMap" type="com.zkl.l_music.vo.SingerListVo" >
         <id column="id" property="id"/>
         <result column="singer" property="singer" />
         <result column="picture" property="picture" />
@@ -25,6 +26,12 @@
         SELECT id,singer,picture FROM singer WHERE 1=1
         <if test="sex!=null">AND sex = #{sex}</if>
         ORDER BY fans DESC,singer;
+    </select>
+
+    <select id="selectSingerByCat" resultMap="singerMap">
+        SELECT id,singer,english_name,nationality,sex,picture,fans,songs,albums,category
+        FROM singer WHERE 1=1
+        <if test="category!=0">AND category = #{category}</if>
     </select>
 
 </mapper>

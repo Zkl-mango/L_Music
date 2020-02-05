@@ -25,6 +25,7 @@ public class SingerEntity implements Serializable {
     private int fans;               /*粉丝数*/
     private int songs;              /*歌曲数*/
     private int albums;             /*专辑数*/
+    private int category;           /*类别*/
 
     public String getId() {
         return id;
@@ -98,6 +99,14 @@ public class SingerEntity implements Serializable {
         this.albums = albums;
     }
 
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "SingerEntity{" +
@@ -110,6 +119,7 @@ public class SingerEntity implements Serializable {
                 ", fans=" + fans +
                 ", songs=" + songs +
                 ", albums=" + albums +
+                ", category=" + category +
                 '}';
     }
 }

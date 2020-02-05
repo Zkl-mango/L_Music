@@ -10,9 +10,11 @@
         <result column="time" property="time" />
         <result column="isHot" property="is_hot"/>
         <association property="userId" column="user_id"
-                     javaType="com.zkl.l_music.dao.UserDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.UserEntity"
+                     select="com.zkl.l_music.dao.UserDao.selectById"/>
         <association property="songId" column="song_id"
-                     javaType="com.zkl.l_music.dao.SongDao.selectById"/>
+                     javaType="com.zkl.l_music.entity.SongEntity"
+                     select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
     <update id="updateAll" >

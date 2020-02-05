@@ -7,6 +7,7 @@ import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.vo.SingerListVo;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Mapper
@@ -18,5 +19,7 @@ public interface SingerDao extends BaseMapper<SingerEntity> {
      * @return
      */
     IPage<SingerListVo> selectSingerList(Page page,String sex);
+
+    List<SingerEntity> selectSingerByCat(int category);
 
 }

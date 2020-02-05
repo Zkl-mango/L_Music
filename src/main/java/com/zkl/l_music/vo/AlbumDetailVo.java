@@ -15,9 +15,11 @@ public class AlbumDetailVo implements Serializable {
 
     private SingerEntity singerId;
     private String name;
-
+    private String picture;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date time;      /*发表时间*/
     private int hot;        /*热度*/
+    private String type;    /*类型*/
+    private int songs;      /*歌曲数*/
     private List<SongVo> songVoList; /*专辑下的歌曲*/
 }
