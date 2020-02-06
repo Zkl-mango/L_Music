@@ -28,9 +28,9 @@ public class AlbumData {
         RestTemplate restTemplate=new RestTemplate();
         Map<String,Object> params=new HashMap<>();
         params.put("id",singer.getId());
-        params.put("offset",(page-1)*500);
+        params.put("offset",(page-1)*10000);
         ResponseEntity<String> responseEntity=restTemplate.getForEntity
-                (DataUrlConstant.url+"/artist/album?id={id}&limit=500&offset={offset}",String.class,params);
+                (DataUrlConstant.url+"/artist/album?id={id}&limit=10000&offset={offset}",String.class,params);
         JSONObject jsonobj=JSONObject.parseObject(responseEntity.getBody());
         JSONArray jsonArray = jsonobj.getJSONArray("hotAlbums");
         boolean more = jsonobj.getBoolean("more");
