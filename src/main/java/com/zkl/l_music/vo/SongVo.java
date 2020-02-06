@@ -17,6 +17,7 @@ public class SongVo {
     private String link;            /*歌曲连接*/
     private String picture;         /*歌曲封面*/
     private String lyric;           /*歌词*/
+    private String klyric;           /*歌词*/
     private String duration;        /*歌曲时长*/
     private int category;           /*歌曲类别*/
     private int hot;                /*歌曲热度*/

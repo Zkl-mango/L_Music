@@ -11,6 +11,7 @@
         <result column="link" property="link" />
         <result column="picture" property="picture" />
         <result column="lyric" property="lyric" />
+        <result column="klyric" property="klyric" />
         <result column="duration" property="duration" />
         <result column="category" property="category" />
         <result column="hot" property="hot" />
@@ -18,18 +19,18 @@
     </resultMap>
 
     <select id="selectSongsByAlbum" resultMap="songMap" >
-        SELECT id,name,singer_id,album_id,link,picture,lyric,duration,category,hot,recommend
+        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,duration,category,hot,recommend
         FROM song WHERE album_id = #{album_id};
     </select>
 
     <select id="selectSongsByCategory" resultMap="songMap" >
-        SELECT id,name,singer_id,album_id,link,picture,lyric,duration,category,hot,recommend
+        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,duration,category,hot,recommend
         FROM song WHERE category = #{category}
         ORDER BY hot desc;
     </select>
 
     <select id="selectSongsBySinger" resultMap="songMap" >
-        SELECT id,name,singer_id,album_id,link,picture,lyric,duration,category,hot,recommend
+        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,duration,category,hot,recommend
         FROM song WHERE singer_id = #{singerId}
         ORDER BY hot desc;
     </select>
