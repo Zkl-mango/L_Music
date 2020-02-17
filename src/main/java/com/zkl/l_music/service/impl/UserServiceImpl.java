@@ -1,5 +1,6 @@
 package com.zkl.l_music.service.impl;
 
+import com.zkl.l_music.bo.LoginBo;
 import com.zkl.l_music.bo.UserBo;
 import com.zkl.l_music.bo.UserPwdBo;
 import com.zkl.l_music.dao.SingerDao;
@@ -135,5 +136,26 @@ public class UserServiceImpl implements UserService {
         }
         userDao.updateById(userEntity);
         return true;
+    }
+
+    @Override
+    public String judgeLogin(LoginBo loginBo) {
+        UserEntity userEntity = new UserEntity();
+        if(loginBo.getType()==0) {
+            userEntity = userDao.selectUserByName(loginBo.getName());
+            if(userEntity==null) {
+                return "用户名错误，请重新输入";
+            }
+            try {
+                if(userEntity.getPassword().equals(SecurityUtil.encryptPassword(loginBo.getPassword()))){
+                    RequestHolder.setUserRequest(userEntity);
+                    return "登录成功";
+                }
+                return "密码不正确，请重新输入";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
     }
 }

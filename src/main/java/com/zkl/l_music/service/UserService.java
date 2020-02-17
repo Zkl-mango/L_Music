@@ -1,9 +1,11 @@
 package com.zkl.l_music.service;
 
+import com.zkl.l_music.bo.LoginBo;
 import com.zkl.l_music.bo.UserBo;
 import com.zkl.l_music.bo.UserPwdBo;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.vo.UserVo;
+import org.apache.catalina.User;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,4 +37,6 @@ public interface UserService {
      * @return
      */
     boolean updateUserPassword(UserPwdBo userPwdBo);
+
+    String judgeLogin(LoginBo loginBo);
 }

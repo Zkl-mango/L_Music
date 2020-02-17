@@ -39,7 +39,7 @@ public class DataController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    //添加歌手信息
+    //添加专辑信息
     @RequestMapping("/album/{cat}")
     public ResponseEntity<Void> getAlbumFromApi(@PathVariable int cat) {
         List<SingerEntity>singerList = singerService.getSingerByCategory(cat);
@@ -53,7 +53,7 @@ public class DataController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    //添加歌手信息
+    //添加歌曲信息
     @RequestMapping("/song/{cat}")
     public ResponseEntity getSongFromApi(@PathVariable int cat) {
         List<SingerEntity>singerList = singerService.getSingerByCategory(cat);
