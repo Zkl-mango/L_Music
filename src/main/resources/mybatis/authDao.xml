@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.AuthDao">
+
+    <resultMap id="authMap" type="AuthEntity" >
+        <id column="id" property="id"/>
+        <result column="token" property="token" />
+        <result column="tokenCreateTime" property="tokenCreateTime" />
+        <association property="user" column="user"
+                     javaType="com.zkl.l_music.entity.UserEntity"
+                     select="com.zkl.l_music.dao.UserDao.selectById"/>
+    </resultMap>
+
+    <insert id="insert">
+        insert into auth(id,token,tokenCreateTime,user)
+        values(#{id},#{token},#{tokenCreateTime},#{user.id});
+    </insert>
+
+    <select id="selectAuthByUser" resultMap="authMap">
+        SELECT id,token,tokenCreateTime,user from auth
+        WHERE user = #{id};
+    </select>
+
+    <select id="selectAuthByToken" resultMap="authMap">
+        SELECT id,token,tokenCreateTime,user from auth
+        WHERE token = #{token};
+    </select>
+
+</mapper>

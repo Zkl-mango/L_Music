@@ -22,4 +22,5 @@ public interface SingerDao extends BaseMapper<SingerEntity> {
 
     List<SingerEntity> selectSingerByCat(int category);
 
+
 }

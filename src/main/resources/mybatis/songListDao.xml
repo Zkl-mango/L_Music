@@ -7,14 +7,19 @@
         <id column="id" property="id"/>
         <result column="list_name" property="listName" />
         <result column="category" property="category" />
+        <result column="introduction" property="introduction"/>
+        <result column="like_num" property="like"/>
+        <result column="tag" property="tag"/>
+        <result column="playNum" property="play_num"/>
+        <result column="picture" property="picture"/>
         <association property="userId" column="user_id"
                      javaType="com.zkl.l_music.entity.UserEntity"
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
 
     <select id="selectSongListByUser" resultMap="songListMap">
-        SELECT id,list_name,category,user_id FROM song_list
-        WHERE user_id = #{userId};
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list
+        WHERE user_id = #{userId} and category=#{category};
     </select>
 
 </mapper>

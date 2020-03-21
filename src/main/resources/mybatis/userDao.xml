@@ -21,4 +21,10 @@
         SELECT id,name,phone,password,avatar,follow FROM user
         WHERE name = #{name};
     </select>
+
+    <select id="selectUserByPhoneAndName" resultMap="userMap">
+        SELECT id,name,phone,password,avatar,follow FROM user
+        WHERE phone = #{phone} and name = #{name};
+    </select>
+
 </mapper>

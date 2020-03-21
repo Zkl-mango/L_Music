@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.Map;
 
 @Slf4j
 public class ApiResponse <T> implements Serializable {
@@ -66,8 +67,9 @@ public class ApiResponse <T> implements Serializable {
     /**
      * 响应失败
      * @return
+     * @param res
      */
-    public static ApiResponse fail() {
+    public static ApiResponse fail(Map<String, Object> res) {
         return fail(ReturnCode.FAIL.getCode(), ReturnCode.FAIL.getMsg());
     }
 

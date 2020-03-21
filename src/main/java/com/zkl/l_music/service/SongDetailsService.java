@@ -19,4 +19,6 @@ public interface SongDetailsService {
     SongDetailsEntity getSongDetailsById(String id);
 
     List<SongListDetailVo> getSongDetailsByList(String listId);
+
+    int countSongDetailsByList(String listId);
 }

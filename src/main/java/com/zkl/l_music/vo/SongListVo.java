@@ -11,7 +11,7 @@ public class SongListVo implements Serializable {
 
     private String id;
     private String listName;        /*列表名称*/
+    private String picture;         /*列表封面*/
     private int category;           /*列表类型，1：自定义；2：我喜欢的*/
-    private UserEntity userId;      /*所属用户*/
-    List<SongListDetailVo> songListDetailVos; /*歌单下的歌曲信息*/
+    private int songNum;            /*歌曲数量*/
 }

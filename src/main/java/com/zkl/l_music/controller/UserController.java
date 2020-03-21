@@ -2,29 +2,41 @@ package com.zkl.l_music.controller;
 
 import com.zkl.l_music.bo.UserBo;
 import com.zkl.l_music.bo.UserPwdBo;
+import com.zkl.l_music.entity.AuthEntity;
+import com.zkl.l_music.entity.UserEntity;
+import com.zkl.l_music.service.AuthService;
 import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.ApiResponse;
+import com.zkl.l_music.util.HandleAvatarUtil;
+import com.zkl.l_music.util.RequestHolder;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.UserVo;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
+import javax.websocket.server.PathParam;
+@Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/user")
 public class UserController {
 
     @Resource
     UserService userService;
+    @Resource
+    AuthService authService;
 
     /**
      * 注册新用户
-     * @param request
      * @param userBo
      * @return
      */
@@ -33,9 +45,10 @@ public class UserController {
         if(StringUtils.isBlank(userBo.getPassword())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail("密码为空，请重新输入"));
         }
-        boolean res = userService.addUser(userBo,request);
-        if(res) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success());
+        UserEntity userEntity = userService.addUser(userBo);
+        if(userEntity != null) {
+            AuthEntity authEntity = authService.addToken(userEntity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(authEntity));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail("注册失败"));
     }
@@ -46,13 +59,30 @@ public class UserController {
      * @param userBo
      * @return
      */
-    @PutMapping(value="")
-    public ResponseEntity updateUser(HttpServletRequest request,@RequestBody @Valid UserBo userBo) {
-        String id = (String)request.getSession().getAttribute("userId");
+    @PutMapping(value="/{id}")
+    public ResponseEntity updateUser(HttpServletRequest request, @PathVariable String id,@RequestBody @Valid UserBo userBo) {
         if(StringUtils.isBlank(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
-        boolean res = userService.updateUser(userBo,id,request);
+        boolean res = userService.updateUser(userBo,id);
+        if(res) {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(id));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
+    }
+
+    /**
+     * 更新头像
+     * @param request
+     * @param id
+     * @return
+     */
+    @PostMapping(value="/{id}/uploadImage")
+    public ResponseEntity uploadImage(HttpServletRequest request, @PathVariable String id,@RequestParam("file") MultipartFile file) {
+        if(StringUtils.isBlank(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
+        }
+        boolean res = userService.updateUserAvatar(file,id);
         if(res) {
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(id));
         }
@@ -64,14 +94,14 @@ public class UserController {
      * @param request
      * @return
      */
-    @DeleteMapping(value="")
-    public ResponseEntity deleteUser(HttpServletRequest request) {
-        String id = (String)request.getSession().getAttribute("userId");
+    @DeleteMapping(value="/{id}")
+    public ResponseEntity deleteUser(HttpServletRequest request, @PathVariable String id) {
         if(StringUtils.isBlank(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
         boolean res = userService.deleteUser(id);
         if(res) {
+            request.getSession().invalidate();
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("注销成功"));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
@@ -82,9 +112,8 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping(value="")
-    public ResponseEntity getUser(HttpServletRequest request) {
-        String id = (String)request.getSession().getAttribute("userId");
+    @GetMapping(value="/{id}")
+    public ResponseEntity getUser(HttpServletRequest request, @PathVariable String id) {
         if(StringUtils.isBlank(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
@@ -101,9 +130,30 @@ public class UserController {
     public ResponseEntity updatePassword(@RequestBody @Valid UserPwdBo userPwdBo) {
         boolean res = userService.updateUserPassword(userPwdBo);
         if(res) {
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("重置成功，请重新登录"));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("重置成功，请登录"));
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.fail("手机号和昵称不匹配"));
     }
 
+    /**
+     * 判断是否重名或者重手机号
+     * @param request
+     * @param name
+     * @param type
+     * @return
+     */
+    @GetMapping(value = "/judge_user/{name}/{type}")
+    public ResponseEntity judgeUserByNameAndPhone(HttpServletRequest request,@PathVariable String name,@PathVariable int type) {
+        String id = (String)request.getSession().getAttribute("userId");
+        boolean res = userService.judgeUserNameAndPhone(name,type,id);
+        if(res) {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
+        } else {
+            if(type == 0) {
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail("该手机号已经存在"));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail("该昵称已经存在"));
+            }
+        }
+    }
 }

@@ -14,6 +14,5 @@ public class UserBo implements Serializable {
 
     private String password;
     private String phone;
-    private String avatar;
     private String followName;
 }

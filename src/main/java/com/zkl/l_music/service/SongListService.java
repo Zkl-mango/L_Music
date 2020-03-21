@@ -16,5 +16,11 @@ public interface SongListService {
 
     SongListVo getSongListById(String id);
 
-    List<SongListEntity> getSongListByUser(String userId);
+    /**
+     * 获取自定义和喜欢歌单的信息
+     * @param userId
+     * @param category
+     * @return
+     */
+    List<SongListVo> getSongListByUser(String userId,int category);
 }

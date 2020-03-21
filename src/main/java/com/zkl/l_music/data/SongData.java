@@ -74,7 +74,6 @@ public class SongData {
             songEntity.setLyric(lyric);
             songEntity.setKlyric(klyric);
             songEntity.setPicture("");
-            songEntity.setDuration("");
             songEntity.setCategory(0);
             songService.addSong(songEntity);
             log.info("new songs--------"+songEntity);

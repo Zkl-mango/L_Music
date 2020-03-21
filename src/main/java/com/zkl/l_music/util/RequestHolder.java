@@ -42,16 +42,15 @@ public class RequestHolder {
      */
     public static String getUserRequest() {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-        return (String)request.getAttribute("userId");
+        return (String)request.getSession().getAttribute("userId");
     }
 
     /**
      * 添加当前请求用户
      * @return
      */
-    public static void setUserRequest(UserEntity userEntity) {
-        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-        request.getSession().setAttribute("userId",userEntity.getId());
-        request.getSession().setAttribute("userEntity",userEntity);
+    public static void setUserRequest(HttpServletRequest request,UserEntity userEntity) {
+        request.getSession().setAttribute("userIds",userEntity.getId());
+        request.getSession().setAttribute("userEntitys",userEntity);
     }
 }

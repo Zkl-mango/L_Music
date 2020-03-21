@@ -19,13 +19,13 @@ public class SingerEntity implements Serializable {
 
     private String singer;
     private String englishName;
-    private String nationality;     /*国籍*/
     private String sex;
     private String picture;         /*个人封面图片*/
     private int fans;               /*粉丝数*/
     private int songs;              /*歌曲数*/
     private int albums;             /*专辑数*/
     private int category;           /*类别*/
+    private String about;           /*歌手简介*/
 
     public String getId() {
         return id;
@@ -49,14 +49,6 @@ public class SingerEntity implements Serializable {
 
     public void setEnglishName(String englishName) {
         this.englishName = englishName;
-    }
-
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
     }
 
     public String getSex() {
@@ -107,19 +99,27 @@ public class SingerEntity implements Serializable {
         this.category = category;
     }
 
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
     @Override
     public String toString() {
         return "SingerEntity{" +
                 "id='" + id + '\'' +
                 ", singer='" + singer + '\'' +
                 ", englishName='" + englishName + '\'' +
-                ", nationality='" + nationality + '\'' +
                 ", sex='" + sex + '\'' +
                 ", picture='" + picture + '\'' +
                 ", fans=" + fans +
                 ", songs=" + songs +
                 ", albums=" + albums +
                 ", category=" + category +
+                ", about='" + about + '\'' +
                 '}';
     }
 }

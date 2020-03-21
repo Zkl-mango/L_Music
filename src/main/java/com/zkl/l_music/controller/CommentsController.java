@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/comments")
 public class CommentsController {
 

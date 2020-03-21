@@ -20,6 +20,11 @@ public class SongListEntity implements Serializable {
     private String listName;        /*列表名称*/
     private int category;           /*列表类型，1：自定义；2：我喜欢的*/
     private UserEntity userId;      /*所属用户*/
+    private String introduction;    /*简介*/
+    private int like;               /*点赞数*/
+    private String tag;             /*列表标签*/
+    private int playNum;            /*播放量*/
+    private String picture;         /*封面*/
 
     public String getId() {
         return id;
@@ -53,6 +58,46 @@ public class SongListEntity implements Serializable {
         this.userId = userId;
     }
 
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public int getPlayNum() {
+        return playNum;
+    }
+
+    public void setPlayNum(int playNum) {
+        this.playNum = playNum;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
     @Override
     public String toString() {
         return "SongListEntity{" +
@@ -60,6 +105,11 @@ public class SongListEntity implements Serializable {
                 ", listName='" + listName + '\'' +
                 ", category=" + category +
                 ", userId=" + userId +
+                ", introduction='" + introduction + '\'' +
+                ", like=" + like +
+                ", tag='" + tag + '\'' +
+                ", playNum=" + playNum +
+                ", picture='" + picture + '\'' +
                 '}';
     }
 }

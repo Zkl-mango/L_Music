@@ -108,4 +108,9 @@ public class SongDetailsServiceImpl implements SongDetailsService {
         }
         return listDetailVos;
     }
+
+    @Override
+    public int countSongDetailsByList(String listId) {
+        return songDetailsDao.countSongsByList(listId);
+    }
 }

@@ -13,5 +13,5 @@ public interface SongDetailsDao extends BaseMapper<SongDetailsEntity> {
 
     List<SongDetailsEntity> selectSongDetailsByListId(String songList);
 
-
+    int countSongsByList(String songList);
 }

@@ -12,7 +12,13 @@ public class UserVo {
 
     private String phone;
 
+    private String avatar;
+
     private List<FollowsDto> followsList;
+
+    private List<SongListVo> songListVos;
+
+    private List<SongListVo> likeListVos;
 
     public String getId() {
         return id;
@@ -46,13 +52,40 @@ public class UserVo {
         this.followsList = followsList;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public List<SongListVo> getSongListVos() {
+        return songListVos;
+    }
+
+    public void setSongListVos(List<SongListVo> songListVos) {
+        this.songListVos = songListVos;
+    }
+
+    public List<SongListVo> getLikeListVos() {
+        return likeListVos;
+    }
+
+    public void setLikeListVos(List<SongListVo> likeListVos) {
+        this.likeListVos = likeListVos;
+    }
+
     @Override
     public String toString() {
         return "UserVo{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
+                ", avatar='" + avatar + '\'' +
                 ", followsList=" + followsList +
+                ", songListVos=" + songListVos +
+                ", likeListVos=" + likeListVos +
                 '}';
     }
 }

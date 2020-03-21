@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.LikeListDao">
+
+    <resultMap id="likeListMap" type="LikeListEntity" >
+        <id column="id" property="id"/>
+        <result column="link_id" property="linkId" />
+        <result column="type" property="type" />
+        <result column="time" property="time"/>
+        <association property="userId" column="user_id"
+                     javaType="com.zkl.l_music.entity.UserEntity"
+                     select="com.zkl.l_music.dao.UserDao.selectById"/>
+    </resultMap>
+
+    <select id="selectLikeListByType" resultMap="likeListMap">
+        SELECT id,link_id,type,user_id,time FROM like_list
+        WHERE user_id = #{userId} and type=#{type} order by time desc;
+    </select>
+
+</mapper>

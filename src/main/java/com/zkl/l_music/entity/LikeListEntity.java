@@ -9,21 +9,20 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *  播放历史列表实体
- * @author zkl
+ * 我喜欢的模块实体
+ * @author zhengkunli
  */
-
-@Alias(value = "HistoryListEntity")
-@TableName("history_list")
-public class HistoryListEntity implements Serializable {
+@Alias(value = "LikeListEntity")
+@TableName("like_list")
+public class LikeListEntity implements Serializable {
 
     @TableId
     private String id;
-    private String linkId;
-    private UserEntity userId;
+    private UserEntity userId;  /*用户*/
+    private String linkId;          /*专辑、歌单连接id*/
+    private int type;               /*类型，2：专辑；3：歌单*/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    private Date time;              /*播放时间*/
-    private int type;               /*类型，1：歌曲；2：专辑；3：歌单*/
+    private Date time;              /*添加时间*/
 
     public String getId() {
         return id;
@@ -31,14 +30,6 @@ public class HistoryListEntity implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getLinkId() {
-        return linkId;
-    }
-
-    public void setLinkId(String linkId) {
-        this.linkId = linkId;
     }
 
     public UserEntity getUserId() {
@@ -49,12 +40,12 @@ public class HistoryListEntity implements Serializable {
         this.userId = userId;
     }
 
-    public Date getTime() {
-        return time;
+    public String getLinkId() {
+        return linkId;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setLinkId(String linkId) {
+        this.linkId = linkId;
     }
 
     public int getType() {
@@ -65,14 +56,22 @@ public class HistoryListEntity implements Serializable {
         this.type = type;
     }
 
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
     @Override
     public String toString() {
-        return "HistoryListEntity{" +
+        return "LikeListEntity{" +
                 "id='" + id + '\'' +
-                ", linkId='" + linkId + '\'' +
                 ", userId=" + userId +
-                ", time=" + time +
+                ", linkId='" + linkId + '\'' +
                 ", type=" + type +
+                ", time=" + time +
                 '}';
     }
 }

@@ -1,9 +1,8 @@
 package com.zkl.l_music.util;
 
 public class ConstantUtil {
-
+    public final static String uploadPath="C:\\Users\\zhengkunli\\Desktop\\picture\\";
     public final static String avatar = "default-avatar.png";
-    private String uploadPath="";
 
     public final static String status = "status";
     public final static String message = "message";

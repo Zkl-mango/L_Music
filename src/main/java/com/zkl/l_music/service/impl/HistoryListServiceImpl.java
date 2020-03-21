@@ -40,7 +40,7 @@ public class HistoryListServiceImpl implements HistoryListService {
         historyListEntity.setTime(new Date());
         historyListEntity.setUserId(userEntity);
         SongEntity songEntity = songDao.selectById(songId);
-        historyListEntity.setSongId(songEntity);
+        historyListEntity.setLinkId(songEntity.getId());
         int res = historyListDao.insert(historyListEntity);
         if(res == 1) {
             return true;
@@ -84,7 +84,7 @@ public class HistoryListServiceImpl implements HistoryListService {
             HistoryListEntity historyListEntity = list.get(i);
             HistoryListVo historyListVo = new HistoryListVo();
             BeanUtils.copyProperties(historyListVo,historyListEntity);
-            SongVo songVo = songService.getSongById(historyListEntity.getSongId().getId());
+            SongVo songVo = songService.getSongById(historyListEntity.getLinkId());
             historyListVo.setSongVo(songVo);
             historyListVos.add(historyListVo);
         }

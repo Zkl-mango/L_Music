@@ -24,4 +24,9 @@
         WHERE song_list = #{songList} AND deleted=0 ORDER BY create_at desc;
     </select>
 
+    <select id="countSongsByList" resultType="int">
+        SELECT count(id) FROM song_detials
+        WHERE song_list = #{songList} AND deleted=0;
+    </select>
+
 </mapper>

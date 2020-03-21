@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/album")
 public class AlbumController {
 

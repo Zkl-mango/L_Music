@@ -2,6 +2,7 @@ package com.zkl.l_music.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zkl.l_music.util.ConstantUtil;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;

@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/songList")
 public class SongListController {
 
@@ -85,8 +86,8 @@ public class SongListController {
         if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
-        List<SongListEntity> list = songListService.getSongListByUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+//        List<SongListEntity> list = songListService.getSongListByUser(userId,1);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
     }
 
     /**

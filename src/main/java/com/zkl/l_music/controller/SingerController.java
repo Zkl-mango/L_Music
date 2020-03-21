@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/singer")
 public class SingerController {
 

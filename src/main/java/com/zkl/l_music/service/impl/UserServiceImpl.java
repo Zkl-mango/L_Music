@@ -8,6 +8,9 @@ import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.dto.FollowsDto;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.UserEntity;
+import com.zkl.l_music.service.AuthService;
+import com.zkl.l_music.service.LikeListService;
+import com.zkl.l_music.service.SongListService;
 import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.*;
 import com.zkl.l_music.vo.UserVo;
@@ -15,12 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -32,48 +34,52 @@ public class UserServiceImpl implements UserService {
     SingerDao singerDao;
     @Resource
     UUIDGenerator uuidGenerator;
-
     @Resource
-    private AvatarConstant avatarConstant;
+    AuthService authService;
+    @Resource
+    SongListService songListService;
+    @Resource
+    LikeListService likeListService;
 
     @Override
-    public boolean addUser(UserBo userBo, HttpServletRequest request) throws Exception {
+    public UserEntity addUser(UserBo userBo) throws Exception {
         UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(userEntity,userBo);
+        BeanUtils.copyProperties(userBo,userEntity);
         userEntity.setId(uuidGenerator.generateUUID());
+        System.out.println(userBo);
+        System.out.println(userEntity);
         log.info("对用户密码进行加密处理-----");
         userEntity.setPassword(SecurityUtil.encryptPassword(userBo.getPassword()));
         log.info("密码加密处理完成-----");
-        log.info("开始处理头像信息-----");
-        String image = userBo.getAvatar();
+        log.info("开始处理头像信息-----注册使用默认头像");
         String avatar = ConstantUtil.avatar;
-        if(!StringUtils.isBlank(image)) {
-            avatar = HandleAvatarUtil.save(image, request, avatarConstant.getUploadPath());
-        }
         userEntity.setAvatar(avatar);
         log.info("处理头像信息结束-----");
         int res = userDao.insert(userEntity);
         if(res == 1) {
-            return true;
+            return userEntity;
         }
-        return false;
+        return null;
     }
 
     @Override
-    public boolean updateUser(UserBo userBo,String id,HttpServletRequest request) {
+    public boolean updateUserAvatar(MultipartFile file,String id) {
+        log.info("开始更新头像信息-----");
+        String avatar = HandleAvatarUtil.save(file);
+        UserEntity userEntity = userDao.selectById(id);
+        userEntity.setAvatar(avatar);
+        log.info("更新头像信息结束-----");
+        userDao.updateById(userEntity);
+        return true;
+    }
+
+    @Override
+    public boolean updateUser(UserBo userBo,String id) {
         UserEntity userEntity = userDao.selectById(id);
         if(userEntity==null) {
             return false;
         }
-        BeanUtils.copyProperties(userEntity,userBo);
-        //如果头像发生更改
-        if(userBo.getAvatar()!=null) {
-            log.info("开始更新头像信息-----");
-            String image = userBo.getAvatar();
-            String avatar = HandleAvatarUtil.save(image, request, avatarConstant.getUploadPath());
-            userEntity.setAvatar(avatar);
-            log.info("更新头像信息结束-----");
-        }
+        BeanUtils.copyProperties(userBo,userEntity);
         int res = userDao.updateById(userEntity);
         if(res == 1) {
             return true;
@@ -88,12 +94,14 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         String followIds = userEntity.getFollow();
-        List<String> followList = Arrays.asList(followIds.split(","));
-        //对关注的歌手关注数进行调整
-        for(int i=0;i<followList.size();i++) {
-            SingerEntity singerEntity = singerDao.selectById(followList.get(i));
-            singerEntity.setFans(singerEntity.getFans()-1);
-            singerDao.updateById(singerEntity);
+        if(!StringUtils.isBlank(followIds)) {
+            List<String> followList = Arrays.asList(followIds.split(","));
+            //对关注的歌手关注数进行调整
+            for(int i=0;i<followList.size();i++) {
+                SingerEntity singerEntity = singerDao.selectById(followList.get(i));
+                singerEntity.setFans(singerEntity.getFans()-1);
+                singerDao.updateById(singerEntity);
+            }
         }
         int res = userDao.deleteById(id);
         if(res == 1) {
@@ -109,26 +117,32 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(userVo,userEntity);
-        List<String> followList = Arrays.asList(userEntity.getFollow().split(","));
-        List<FollowsDto> follows = new ArrayList<>();
-        for(int i=0;i<followList.size();i++) {
-            SingerEntity singerEntity = singerDao.selectById(followList.get(i));
-            FollowsDto followsDto = new FollowsDto();
-            followsDto.setId(singerEntity.getId());
-            followsDto.setName(singerEntity.getSinger());
-            follows.add(followsDto);
+        BeanUtils.copyProperties(userEntity,userVo);
+        if(!StringUtils.isBlank(userEntity.getFollow())) {
+            List<String> followList = Arrays.asList(userEntity.getFollow().split(","));
+            List<FollowsDto> follows = new ArrayList<>();
+            for(int i=0;i<followList.size();i++) {
+                SingerEntity singerEntity = singerDao.selectById(followList.get(i));
+                FollowsDto followsDto = new FollowsDto();
+                followsDto.setId(singerEntity.getId());
+                followsDto.setName(singerEntity.getSinger());
+                follows.add(followsDto);
+            }
+            userVo.setFollowsList(follows);
         }
-        userVo.setFollowsList(follows);
+        //查找自建歌单
+        userVo.setSongListVos(songListService.getSongListByUser(userEntity.getId(),1));
+        //查找收藏歌单
+        userVo.setLikeListVos(likeListService.getSongListByUser(userEntity.getId(),3));
         return userVo;
     }
 
     @Override
     public boolean updateUserPassword(UserPwdBo userPwdBo) {
-        if(!userPwdBo.getPassword().equals(userPwdBo.getConfigPwd())) {
+        UserEntity userEntity = userDao.selectUserByPhoneAndName(userPwdBo.getPhone(),userPwdBo.getName());
+        if(userEntity == null) {
             return false;
         }
-        UserEntity userEntity = userDao.selectUserByPhone(userPwdBo.getPhone());
         try {
             userEntity.setPassword(SecurityUtil.encryptPassword(userPwdBo.getPassword()));
         } catch (Exception e) {
@@ -139,23 +153,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String judgeLogin(LoginBo loginBo) {
-        UserEntity userEntity = new UserEntity();
-        if(loginBo.getType()==0) {
-            userEntity = userDao.selectUserByName(loginBo.getName());
-            if(userEntity==null) {
-                return "用户名错误，请重新输入";
+    public Map<String,Object> judgeLogin(HttpServletRequest request, LoginBo loginBo) {
+        Map<String,Object> res = new HashMap<String,Object>();
+        UserEntity userEntity = userDao.selectUserByPhone(loginBo.getPhone());
+        if(userEntity==null) {
+            res.put("message","手机号不存在，请重新输入");
+            return res;
+        }
+        try {
+            if(userEntity.getPassword().equals(SecurityUtil.encryptPassword(loginBo.getPassword()))){
+                res.put("message","登录成功");
+                res.put("auth", authService.getAuth(userEntity));
+                return res;
             }
-            try {
-                if(userEntity.getPassword().equals(SecurityUtil.encryptPassword(loginBo.getPassword()))){
-                    RequestHolder.setUserRequest(userEntity);
-                    return "登录成功";
-                }
-                return "密码不正确，请重新输入";
-            } catch (Exception e) {
-                e.printStackTrace();
+            res.put("message","密码不正确，请重新输入");
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    @Override
+    public boolean judgeUserNameAndPhone(String name,int type,String id) {
+        if(type == 0) {
+            //判断是否有重复的手机号
+            UserEntity isUser = userDao.selectUserByPhone(name);
+            if(isUser !=null ) {
+                return false;
             }
         }
-        return "";
+        else {
+            //id为空则为注册
+            if(StringUtils.isBlank(id)) {
+                //判断是否有重名的名字
+                UserEntity isUser = userDao.selectUserByName(name);
+                if (isUser != null) {
+                    return false;
+                }
+            } else {
+                //判断是否有重名的名字
+                UserEntity isUser = userDao.selectUserByName(name);
+                if(isUser !=null && !isUser.equals(id)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

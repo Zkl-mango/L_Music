@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -69,12 +70,20 @@ public class SongListServiceImpl implements SongListService {
         SongListVo songListVo = new SongListVo();
         BeanUtils.copyProperties(songListVo,songListEntity);
         List<SongListDetailVo> list = songDetailsService.getSongDetailsByList(id);
-        songListVo.setSongListDetailVos(list);
+//        songListVo.setSongListDetailVos(list);
         return songListVo;
     }
 
     @Override
-    public List<SongListEntity> getSongListByUser(String userId) {
-        return songListDao.selectSongListByUser(userId);
+    public List<SongListVo> getSongListByUser(String userId,int category) {
+        List<SongListEntity> songList =  songListDao.selectSongListByUser(userId,category);
+        List<SongListVo> songListVos = new ArrayList<>();
+        for(int i=0;i<songList.size();i++) {
+            SongListVo songListVo = new SongListVo();
+            BeanUtils.copyProperties(songList.get(i),songListVo);
+            songListVo.setSongNum(songDetailsService.countSongDetailsByList(songList.get(i).getId()));
+            songListVos.add(songListVo);
+        }
+        return songListVos;
     }
 }

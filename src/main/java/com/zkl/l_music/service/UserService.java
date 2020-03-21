@@ -6,21 +6,24 @@ import com.zkl.l_music.bo.UserPwdBo;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.vo.UserVo;
 import org.apache.catalina.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 public interface UserService {
 
     /**
      * 注册用户
      * @param userBo
-     * @param request
      * @return
      * @throws Exception
      */
-    boolean addUser(UserBo userBo, HttpServletRequest request) throws Exception;
+    UserEntity addUser(UserBo userBo) throws Exception;
 
-    boolean updateUser(UserBo userBo,String id,HttpServletRequest request);
+    boolean updateUserAvatar(MultipartFile file,String id);
+
+    boolean updateUser(UserBo userBo,String id);
 
     boolean deleteUser(String id);
 
@@ -38,5 +41,13 @@ public interface UserService {
      */
     boolean updateUserPassword(UserPwdBo userPwdBo);
 
-    String judgeLogin(LoginBo loginBo);
+    Map<String,Object> judgeLogin(HttpServletRequest request, LoginBo loginBo);
+
+    /**
+     * 判断是否重名
+     * @param name
+     * @return
+     */
+    boolean judgeUserNameAndPhone(String name,int type,String id) ;
+
 }

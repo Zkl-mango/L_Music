@@ -24,7 +24,7 @@ public class SongEntity implements Serializable {
     private String picture;         /*歌曲封面*/
     private String lyric;           /*歌词*/
     private String klyric;          /*歌词*/
-    private String duration;        /*歌曲时长*/
+    private int like;               /*点赞数*/
     private int category;           /*歌曲类别*/
     private int hot;                /*歌曲热度*/
     private int recommend;          /*歌曲评论数*/
@@ -85,14 +85,6 @@ public class SongEntity implements Serializable {
         this.lyric = lyric;
     }
 
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
     public int getCategory() {
         return category;
     }
@@ -125,6 +117,14 @@ public class SongEntity implements Serializable {
         this.klyric = klyric;
     }
 
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
     @Override
     public String toString() {
         return "SongEntity{" +
@@ -136,7 +136,7 @@ public class SongEntity implements Serializable {
                 ", picture='" + picture + '\'' +
                 ", lyric='" + lyric + '\'' +
                 ", klyric='" + klyric + '\'' +
-                ", duration='" + duration + '\'' +
+                ", like=" + like +
                 ", category=" + category +
                 ", hot=" + hot +
                 ", recommend=" + recommend +

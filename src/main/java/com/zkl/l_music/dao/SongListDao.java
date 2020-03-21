@@ -9,5 +9,5 @@ import java.util.List;
 @Mapper
 public interface SongListDao extends BaseMapper<SongListEntity> {
 
-    List<SongListEntity> selectSongListByUser(String userId);
+    List<SongListEntity> selectSongListByUser(String userId,int category);
 }
