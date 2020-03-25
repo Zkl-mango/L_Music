@@ -1,5 +1,6 @@
 package com.zkl.l_music.controller;
 
+import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.service.AlbumService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,14 +28,15 @@ public class AlbumController {
      * @param flag
      * @return
      */
-    @PutMapping(value="/{id}")
-    public ResponseEntity updateSinger(@PathVariable String id, int flag) {
-        boolean res = albumService.updateAlbumByFlag(id,flag);
+    @PutMapping(value="/{id}/{flag}")
+    public ResponseEntity updateSinger(HttpServletRequest request, @PathVariable String id,@PathVariable int flag) {
+        String userId = request.getHeader("userId");
+        boolean res = albumService.updateAlbumByFlag(id,flag,userId);
         if(res) {
             if(flag == -1) {
                 return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消收藏成功"));
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("收藏成功"));
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("已收藏到我的喜欢"));
             }
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
@@ -44,8 +48,8 @@ public class AlbumController {
      * @return
      */
     @GetMapping(value = "/list/{singerId}")
-    public ResponseEntity getAlbumsBySinger(@PathVariable String singerId) {
-        List list = albumService.getAlbumsBySinger(singerId);
+    public ResponseEntity getAlbumsBySinger(@PathVariable String singerId,PageBo pageBo) {
+        List list = albumService.getAlbumsBySinger(pageBo,singerId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
     }
 
@@ -54,8 +58,8 @@ public class AlbumController {
      * @return
      */
     @GetMapping(value = "/list")
-    public ResponseEntity getNewAlbums() {
-        List list = albumService.getNewAlbums();
+    public ResponseEntity getNewAlbums(String id,String singerId) {
+        List list = albumService.getNewAlbums(id,singerId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
     }
 
@@ -64,9 +68,13 @@ public class AlbumController {
      * @param id
      * @return
      */
-    @GetMapping("{id}")
-    public ResponseEntity getAlbumById(@PathVariable String id) {
-        AlbumDetailVo albumDetailVo = albumService.getAlbumById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity getAlbumById(HttpServletRequest request,@PathVariable String id) {
+        String userId = request.getHeader("userId");
+        if(userId.equals("undefined")) {
+            userId = null;
+        }
+        AlbumDetailVo albumDetailVo = albumService.getAlbumById(id,userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(albumDetailVo));
     }
 }

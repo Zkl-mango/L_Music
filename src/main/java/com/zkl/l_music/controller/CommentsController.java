@@ -5,6 +5,7 @@ import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.CommentsLikeService;
 import com.zkl.l_music.service.CommentsService;
+import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.RequestHolder;
 import com.zkl.l_music.util.ReturnCode;
@@ -24,6 +25,8 @@ import javax.validation.Valid;
 public class CommentsController {
 
     @Resource
+    UserService userService;
+    @Resource
     CommentsService commentsService;
     @Resource
     CommentsLikeService commentsLikeService;
@@ -36,11 +39,11 @@ public class CommentsController {
      */
     @PostMapping(value = "")
     public ResponseEntity addComments(HttpServletRequest request, @RequestBody @Valid CommentsBo commentsBo) {
-        UserEntity userEntity = (UserEntity) request.getSession().getAttribute("userEntity");
-        if(userEntity == null) {
+        String id = request.getHeader("userId");
+        if(StringUtils.isBlank(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
-        boolean res = commentsService.addComments(commentsBo,userEntity);
+        boolean res = commentsService.addComments(commentsBo,id);
         if(res) {
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("添加评论成功"));
         }
@@ -55,19 +58,19 @@ public class CommentsController {
      */
     @PutMapping(value = "/{id}/{type}")
     public ResponseEntity updateComments(HttpServletRequest request,@PathVariable String id,@PathVariable int type) {
-        UserEntity userEntity = (UserEntity) request.getSession().getAttribute("userEntity");
-        if(userEntity == null) {
+        String userId = request.getHeader("userId");
+        if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
         if (type == 1) {
             //更新点赞数
             commentsLikeService.incrementLikedCount(id);
             //记录点赞数据
-            commentsLikeService.saveLikedRedis(userEntity.getId(),id);
+            commentsLikeService.saveLikedRedis(userId,id);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("点赞成功"));
         }
         commentsLikeService.decrementLikedCount(id);
-        commentsLikeService.unlikeFromRedis(userEntity.getId(),id);
+        commentsLikeService.unlikeFromRedis(userId,id);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消点赞成功"));
     }
 
@@ -79,7 +82,7 @@ public class CommentsController {
      */
     @DeleteMapping(value = "/{id}")
     public ResponseEntity deletedComments(HttpServletRequest request, @PathVariable String id) {
-        String userId = (String) request.getSession().getAttribute("userId");
+        String userId = request.getHeader("userId");
         if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
@@ -99,7 +102,8 @@ public class CommentsController {
     @GetMapping(value = "/{songId}")
     public ResponseEntity getComments(@PathVariable String songId, @RequestBody @Valid PageBo pageBo) {
         CommentsVo commentsVo = commentsService.getCommentsBySong(pageBo,songId);
-        String userId = RequestHolder.getUserRequest();
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(commentsVo));
     }
+
+
 }

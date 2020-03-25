@@ -14,13 +14,14 @@ import java.util.List;
 public interface SingerDao extends BaseMapper<SingerEntity> {
 
     /**
-     * 根据性别查找歌手
+     * 根据性别/类别查找歌手
      * @param sex
      * @return
      */
-    IPage<SingerListVo> selectSingerList(Page page,String sex);
+    List<SingerEntity> selectSingerList(String sex,int category);
 
     List<SingerEntity> selectSingerByCat(int category);
 
+    List<SingerEntity> selectHotTop(String sex,int category);
 
 }

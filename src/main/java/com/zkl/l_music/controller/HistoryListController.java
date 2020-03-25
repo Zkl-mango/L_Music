@@ -3,8 +3,11 @@ package com.zkl.l_music.controller;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.HistoryListService;
 import com.zkl.l_music.util.ApiResponse;
+import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.HistoryListVo;
+import com.zkl.l_music.vo.SongListDetailVo;
+import com.zkl.l_music.vo.SongListVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -48,12 +53,21 @@ public class HistoryListController {
      */
     @GetMapping(value = "")
     public ResponseEntity getHistorys(HttpServletRequest request) {
-        String  userId = (String) request.getSession().getAttribute("userId");
+        String  userId = request.getHeader("userId");
         if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
-        List<HistoryListVo> list = historyListService.getHistoryListByUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+        //喜欢的歌曲
+        List<HistoryListVo> historyListVos = historyListService.getHistoryListByUser(userId);
+        //喜欢的专辑
+        List<SongListVo> albumList = historyListService.getHistoryAlbumSongByUser(userId, ConstantUtil.albumType);
+        //喜欢的歌单
+        List<SongListVo> songlist = historyListService.getHistoryAlbumSongByUser(userId,ConstantUtil.listType);
+        Map<Object,Object> res = new HashMap<>();
+        res.put("likeSong",historyListVos);
+        res.put("albumList",albumList);
+        res.put("songList",songlist);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
 }

@@ -78,10 +78,7 @@ public class SongDetailsServiceImpl implements SongDetailsService {
     @Override
     public boolean deleteSongDetailsByList(String listId) {
         boolean res = songDetailsDao.deleteSongDetailsByListId(listId);
-        if(res) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
@@ -100,7 +97,7 @@ public class SongDetailsServiceImpl implements SongDetailsService {
         List<SongListDetailVo> listDetailVos = new ArrayList<>();
         for(int i=0;i<list.size();i++) {
             SongListDetailVo songListDetailVo = new SongListDetailVo();
-            BeanUtils.copyProperties(songListDetailVo,list.get(i));
+            BeanUtils.copyProperties(list.get(i),songListDetailVo);
             SongEntity songEntity = list.get(i).getSongId();
             SongVo songVo = songService.getSongById(songEntity.getId());
             songListDetailVo.setSongVo(songVo);

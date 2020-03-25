@@ -13,9 +13,18 @@
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
 
+    <insert id="insert">
+        insert into like_list(id,link_id,type,user_id,time)
+        values(#{id},#{linkId},#{type},#{userId.id},#{time});
+    </insert>
+
     <select id="selectLikeListByType" resultMap="likeListMap">
         SELECT id,link_id,type,user_id,time FROM like_list
         WHERE user_id = #{userId} and type=#{type} order by time desc;
     </select>
 
+    <select id="selectLikeListByUserAndLike" resultMap="likeListMap">
+        SELECT id,link_id,type,user_id,time FROM like_list
+        WHERE user_id = #{userId} and link_id=#{linkId};
+    </select>
 </mapper>

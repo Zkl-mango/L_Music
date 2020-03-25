@@ -24,7 +24,7 @@ public class SongEntity implements Serializable {
     private String picture;         /*歌曲封面*/
     private String lyric;           /*歌词*/
     private String klyric;          /*歌词*/
-    private int like;               /*点赞数*/
+    private int likeNum;               /*点赞数*/
     private int category;           /*歌曲类别*/
     private int hot;                /*歌曲热度*/
     private int recommend;          /*歌曲评论数*/
@@ -117,12 +117,12 @@ public class SongEntity implements Serializable {
         this.klyric = klyric;
     }
 
-    public int getLike() {
-        return like;
+    public int getLikeNum() {
+        return likeNum;
     }
 
-    public void setLike(int like) {
-        this.like = like;
+    public void setLikeNum(int likeNum) {
+        this.likeNum = likeNum;
     }
 
     @Override
@@ -136,7 +136,7 @@ public class SongEntity implements Serializable {
                 ", picture='" + picture + '\'' +
                 ", lyric='" + lyric + '\'' +
                 ", klyric='" + klyric + '\'' +
-                ", like=" + like +
+                ", likeNum=" + likeNum +
                 ", category=" + category +
                 ", hot=" + hot +
                 ", recommend=" + recommend +

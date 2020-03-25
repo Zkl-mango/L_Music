@@ -11,4 +11,5 @@ public interface LikeListDao extends BaseMapper<LikeListEntity> {
 
     List<LikeListEntity> selectLikeListByType(String userId,int type);
 
+    LikeListEntity selectLikeListByUserAndLike(String userId,String linkId);
 }

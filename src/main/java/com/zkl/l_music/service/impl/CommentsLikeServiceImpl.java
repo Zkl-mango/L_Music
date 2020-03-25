@@ -2,14 +2,18 @@ package com.zkl.l_music.service.impl;
 
 import com.zkl.l_music.dao.CommentsDao;
 import com.zkl.l_music.dao.CommentsLikeDao;
+import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.entity.CommentsEntity;
 import com.zkl.l_music.entity.CommentsLikeEntity;
+import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.CommentsLikeService;
 import com.zkl.l_music.util.LikedStatusEnum;
 import com.zkl.l_music.util.RedisKeyUtils;
 import com.zkl.l_music.util.UUIDGenerator;
+import com.zkl.l_music.vo.CommentLikesVo;
 import com.zkl.l_music.vo.CommentsDetailVo;
+import com.zkl.l_music.vo.CommentsVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
@@ -32,6 +36,8 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     CommentsDao commentsDao;
     @Resource
     UserDao userDao;
+    @Resource
+    SingerDao singerDao;
     @Resource
     UUIDGenerator uuidGenerator;
     @Autowired
@@ -122,6 +128,7 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     @Override
     @Transactional
     public void getLikedsFromRedisToDB() {
+        //更新点赞状态
         List<CommentsLikeEntity> list = this.getLikedDataFromRedis();
         for(int i=0;i<list.size();i++) {
             CommentsLikeEntity commentsLikeEntity = list.get(i);
@@ -150,5 +157,51 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
         //判断评论是否被用户点赞过
         commentsDetailVo.setIsUser(1);
         return commentsDetailVo;
+    }
+
+    @Override
+    public List<CommentLikesVo> getCommentLikeByUser(String userId) {
+        List<CommentLikesVo> list = new ArrayList<>();
+        //从redis获取点赞列表
+        Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(RedisKeyUtils.MAP_KEY_COMMENT_LIKED, ScanOptions.NONE);
+        while (cursor.hasNext()) {
+            Map.Entry<Object, Object> entry = cursor.next();
+            String key = (String) entry.getKey();
+            //分离出 likedUserId，likedPostId
+            String[] split = key.split("::");
+            String likedUserId = split[0];
+            String commentId = split[1];
+            Integer value = (Integer) entry.getValue();
+            if(likedUserId.equals(userId) && value == 1) {
+                //组装成 UserLike 对象
+                CommentLikesVo commentLikesVo = new CommentLikesVo();
+                commentLikesVo.setId(commentId);
+                CommentsEntity commentsEntity = commentsDao.selectById(commentId);
+                commentLikesVo.setContent(commentsEntity.getComment());
+                commentLikesVo.setNum(commentsEntity.getLikes());
+                commentLikesVo.setUsername(commentsEntity.getUserId().getName());
+                SingerEntity singerEntity = singerDao.selectById(commentsEntity.getSongId().getSingerId());
+                String name = singerEntity.getSinger()+"-"+commentsEntity.getSongId().getName();
+                commentLikesVo.setSongname(name);
+                commentLikesVo.setIscancle(false);
+                list.add(commentLikesVo);
+            }
+        }
+        //数据库中获取点赞列表
+        List<CommentsLikeEntity> commentsLikeEntities = commentsLikeDao.selectCommentsIsLike(userId);
+        for(int i=0;i<commentsLikeEntities.size();i++) {
+            CommentsEntity commentsEntity = commentsLikeEntities.get(i).getCommentId();
+            CommentLikesVo commentLikesVo = new CommentLikesVo();
+            commentLikesVo.setId(commentsEntity.getId());
+            commentLikesVo.setContent(commentsEntity.getComment());
+            commentLikesVo.setNum(commentsEntity.getLikes());
+            commentLikesVo.setUsername(commentsEntity.getUserId().getName());
+            SingerEntity singerEntity = singerDao.selectById(commentsEntity.getSongId().getSingerId());
+            String name = singerEntity.getSinger()+"-"+commentsEntity.getSongId().getName();
+            commentLikesVo.setSongname(name);
+            commentLikesVo.setIscancle(false);
+            list.add(commentLikesVo);
+        }
+        return list;
     }
 }

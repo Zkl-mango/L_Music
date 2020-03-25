@@ -6,12 +6,16 @@ import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SingerDetailVo;
+import com.zkl.l_music.vo.SingerListVo;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -28,9 +32,10 @@ public class SingerController {
      * @param flag
      * @return
      */
-    @PutMapping(value="/{id}")
-    public ResponseEntity updateSinger(@PathVariable String id, int flag) {
-        boolean res = singerService.updateSinger(id,flag);
+    @PutMapping(value="/{id}/{flag}")
+    public ResponseEntity updateSinger(HttpServletRequest request,@PathVariable String id,@PathVariable int flag) {
+        String userId = request.getHeader("userId");
+        boolean res = singerService.updateSinger(id,flag,userId);
         if(res) {
             if(flag == -1) {
                 return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消关注成功"));
@@ -43,26 +48,18 @@ public class SingerController {
 
     /**
      * 获取歌手列表信息
-     * @param pageBo
      * @return
      */
-    @GetMapping(value="/singerList")
-    public ResponseEntity getSingerList(@RequestBody @Valid PageBo pageBo) {
-        PageInfoVo pageInfoVo = singerService.getSingers(pageBo);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageInfoVo));
+    @GetMapping(value="/singerList/{category}/{sex}")
+    public ResponseEntity getSingerList(HttpServletRequest request, @PathVariable int category, @PathVariable String sex) {
+        String userId = request.getHeader("userId");
+        if(userId.equals("undefined")) {
+            userId = null;
+        }
+        List<SingerListVo> singerListVos = singerService.getSingers(sex,category,userId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(singerListVos));
     }
 
-    /**
-     * 根据性别获取歌手列表信息
-     * @param sex
-     * @param pageBo
-     * @return
-     */
-    @GetMapping(value="/singerList/{sex}")
-    public ResponseEntity getSingerListBySex(@PathVariable String sex,@RequestBody @Valid PageBo pageBo) {
-        PageInfoVo pageInfoVo = singerService.getSingersBySex(pageBo, sex);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageInfoVo));
-    }
 
     /**
      * 获取歌曲详情
@@ -71,8 +68,8 @@ public class SingerController {
      * @return
      */
     @GetMapping(value = "/{id}")
-    public ResponseEntity getSingerById(@PathVariable String id,@RequestBody @Valid PageBo pageBo) {
-        SingerDetailVo singerDetailVo = singerService.getSingerById(id,pageBo);
+    public ResponseEntity getSingerById(@PathVariable String id, PageBo pageBo,int type) {
+        SingerDetailVo singerDetailVo = singerService.getSingerById(id,pageBo,type);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(singerDetailVo));
     }
 

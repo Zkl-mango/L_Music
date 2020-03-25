@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.SmallTagDao">
+
+    <resultMap id="smallTagMap" type="SmallTagEntity" >
+        <id column="id" property="id"/>
+        <result column="name" property="name" />
+        <result column="category" property="category" />
+        <result column="hot" property="hot" />
+    </resultMap>
+
+    <select id="selectTagsByCategory" resultMap="smallTagMap">
+        SELECT id,name,category,hot from small_tag
+        WHERE category = #{category};
+    </select>
+
+    <select id="selectTagsByCategory" resultMap="smallTagMap">
+        SELECT id,name,category,hot from small_tag
+        WHERE hot = #{hot};
+    </select>
+</mapper>

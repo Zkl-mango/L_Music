@@ -5,12 +5,13 @@ import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.CommentsEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.vo.CommentsVo;
+import com.zkl.l_music.vo.MyCommentVo;
 
 import java.util.List;
 
 public interface CommentsService {
 
-    boolean addComments(CommentsBo commentsBo, UserEntity userEntity);
+    boolean addComments(CommentsBo commentsBo, String userId);
 
     boolean updateCommentsLike(String id,int type);
 
@@ -23,5 +24,5 @@ public interface CommentsService {
 
     CommentsVo getCommentsBySong(PageBo page, String songId);
 
-
+    List<MyCommentVo> getCommentsByUser(String userId);
 }

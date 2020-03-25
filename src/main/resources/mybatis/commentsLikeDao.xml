@@ -19,4 +19,8 @@
         WHERE user_id = #{userId} and comment_id = #{commentId};
     </select>
 
+    <select id="selectCommentsIsLike" resultMap="commentsLikeMap" >
+        SELECT id,status,user_id,comment_id FROM comments_like
+        WHERE user_id = #{userId} and status = 1;
+    </select>
 </mapper>

@@ -5,19 +5,25 @@ import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.SongDetailsService;
 import com.zkl.l_music.service.SongListService;
+import com.zkl.l_music.service.TagService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.SongListVo;
+import com.zkl.l_music.vo.TagVo;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -28,6 +34,8 @@ public class SongListController {
     SongListService songListService;
     @Resource
     SongDetailsService songDetailsService;
+    @Resource
+    TagService tagService;
 
     /**
      * 创建歌单
@@ -36,58 +44,68 @@ public class SongListController {
      * @return
      */
     @PostMapping(value = "")
-    public ResponseEntity addSongList(HttpServletRequest request,@RequestBody @Valid SongListEntity songListEntity) {
-        UserEntity userEntity = (UserEntity) request.getSession().getAttribute("userEntity");
-        if(userEntity == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
-        }
-        String res = songListService.addSongList(songListEntity,userEntity);
-       if(StringUtils.isBlank(res)) {
+    public ResponseEntity addSongList(HttpServletRequest request,@RequestBody SongListEntity songListEntity) {
+        String id = request.getHeader("userId");
+        String res = songListService.addSongList(songListEntity.getListName(),id,1);
+        if(!StringUtils.isBlank(res)) {
            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
        }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
     }
 
     /**
-     * 修改歌单名称
-     * @param id
-     * @param name
+     * 修改歌单
+     * @param songListEntity
      * @return
      */
-    @PutMapping(value = "/{id}")
-    public ResponseEntity updateSongList(@PathVariable String id,@RequestBody  String name) {
-        boolean res = songListService.updateSongList(id,name);
+    @PutMapping(value = "")
+    public ResponseEntity updateSongList(@RequestBody SongListEntity songListEntity) {
+        boolean res = songListService.updateSongList(songListEntity);
         if(res) {
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("修改歌单名成功"));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("修改成功"));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
+    }
+
+    /**
+     * 更新歌单封面
+     * @param id
+     * @return
+     */
+    @PostMapping(value="/{id}/uploadImage")
+    public ResponseEntity uploadImage(@PathVariable String id,@RequestParam("file") MultipartFile file) {
+        boolean res = songListService.updateSongListPicture(id,file);
+        if(res) {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(id));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
     }
 
     /**
      * 删除歌单
-     * @param id
+     * @param ids
      * @return
      */
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteSongList(@PathVariable String id) {
-        //删除歌单中的歌曲
-        boolean res = songDetailsService.deleteSongDetailsByList(id);
-        //删除歌单
-        boolean res1 = songListService.deleteSongList(id);
-        if(res&&res1) {
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("删除歌单成功"));
+    @DeleteMapping(value = "/{ids}")
+    public ResponseEntity deleteSongList(@PathVariable String ids) {
+        String[] idArray = ids.split(",");
+        for(int i=0;i<idArray.length;i++) {
+            //删除歌单中的歌曲
+            boolean res = songDetailsService.deleteSongDetailsByList(idArray[i]);
+            //删除歌单
+            boolean res1 = songListService.deleteSongList(idArray[i]);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("删除歌单成功"));
     }
 
     @GetMapping(value = "")
     public ResponseEntity getSongListByUser(HttpServletRequest request) {
-        String  userId = (String) request.getSession().getAttribute("userId");
+        String  userId = request.getHeader("userId");
         if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
-//        List<SongListEntity> list = songListService.getSongListByUser(userId,1);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
+        List<SongListVo> list = songListService.getSongListByUser(userId,1);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
     }
 
     /**
@@ -98,7 +116,11 @@ public class SongListController {
     @GetMapping(value = "/{id}")
     public ResponseEntity getSongList(@PathVariable String id) {
         SongListVo songListVo = songListService.getSongListById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(songListVo));
+        List<TagVo> tagList = tagService.getTagList();
+        Map<Object,Object> res = new HashMap<>();
+        res.put("detail",songListVo);
+        res.put("tagList",tagList);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
     /**

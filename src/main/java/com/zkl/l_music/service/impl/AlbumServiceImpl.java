@@ -1,20 +1,29 @@
 package com.zkl.l_music.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.dao.AlbumDao;
+import com.zkl.l_music.dao.LikeListDao;
 import com.zkl.l_music.dao.SingerDao;
+import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.entity.AlbumEntity;
+import com.zkl.l_music.entity.LikeListEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.AlbumService;
 import com.zkl.l_music.service.SongService;
+import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.UUIDGenerator;
 import com.zkl.l_music.vo.AlbumDetailVo;
 import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -26,7 +35,13 @@ public class AlbumServiceImpl implements AlbumService {
     @Resource
     SingerDao singerDao;
     @Resource
+    UserDao userDao;
+    @Resource
     SongService songService;
+    @Resource
+    LikeListDao likeListDao;
+    @Resource
+    UUIDGenerator uuidGenerator;
 
     @Override
     public boolean addAlbum(AlbumEntity albumEntity) {
@@ -39,13 +54,28 @@ public class AlbumServiceImpl implements AlbumService {
 
     //flag:-1,取消收藏;1,收藏；
     @Override
-    public boolean updateAlbumByFlag(String id,int flag) {
+    public boolean updateAlbumByFlag(String id,int flag,String userId) {
         AlbumEntity albumEntity = albumDao.selectById(id);
         if(albumEntity==null) {
             return false;
         }
-        albumEntity.setHot(albumEntity.getHot()+flag);
-        int res = albumDao.updateById(albumEntity);
+        AlbumEntity updateAlbum = new AlbumEntity();
+        updateAlbum.setId(albumEntity.getId());
+        LikeListEntity likeListEntity = new LikeListEntity();
+        if(flag == 1) {
+            likeListEntity.setId(uuidGenerator.generateUUID());
+            likeListEntity.setLinkId(albumEntity.getId());
+            likeListEntity.setTime(new Date());
+            likeListEntity.setType(ConstantUtil.albumType);
+            likeListEntity.setUserId(userDao.selectById(userId));
+            likeListDao.insert(likeListEntity);
+        } else if (flag == -1) {
+            likeListEntity = likeListDao.selectLikeListByUserAndLike(userId,albumEntity.getId());
+            likeListDao.deleteById(likeListEntity.getId());
+        }
+        updateAlbum.setSongs(albumEntity.getSongs());
+        updateAlbum.setHot(albumEntity.getHot()+flag);
+        int res = albumDao.updateById(updateAlbum);
         if(res == 1) {
             return true;
         }
@@ -71,15 +101,27 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public AlbumDetailVo getAlbumById(String id) {
+    public AlbumDetailVo getAlbumById(String id,String userId) {
         AlbumEntity albumEntity = albumDao.selectById(id);
         AlbumDetailVo albumDetailVo = new AlbumDetailVo();
-        BeanUtils.copyProperties(albumDetailVo,albumEntity);
+        BeanUtils.copyProperties(albumEntity,albumDetailVo);
         if(albumEntity == null) {
             return null;
         }
+        if(StringUtils.isBlank(userId)) {
+            albumDetailVo.setLike(0);
+        } else {
+            LikeListEntity likeListEntity = likeListDao.selectLikeListByUserAndLike(userId,albumEntity.getId());
+            if(likeListEntity==null) {
+                albumDetailVo.setLike(0);
+            } else {
+                albumDetailVo.setLike(1);
+            }
+        }
         List<SongVo> songVoList = songService.getSongsByAlbum(albumEntity.getId());
         albumDetailVo.setSongVoList(songVoList);
+        List<AlbumEntity> list = albumDao.selectNewAlbums(id,albumEntity.getSingerId().getId());
+        albumDetailVo.setMoreAlbums(list);
         return albumDetailVo;
     }
 
@@ -94,21 +136,33 @@ public class AlbumServiceImpl implements AlbumService {
      * @return
      */
     @Override
-    public List<AlbumEntity> getAlbumsBySinger(String singerId) {
+    public List<AlbumEntity> getAlbumsBySinger(PageBo pageBo, String singerId) {
         SingerEntity singerEntity = singerDao.selectById(singerId);
         if(singerEntity==null) {
             return null;
         }
-        List<AlbumEntity> list = albumDao.selectAlbumsBySinger(singerId);
+        Page page = new Page(pageBo.getPage(),pageBo.getSize());
+        IPage<AlbumEntity> ipage = albumDao.selectAlbumsBySinger(page,singerId);
+        List<AlbumEntity> list = ipage.getRecords();
+        return list;
+    }
+
+    @Override
+    public List<AlbumEntity> getAllAlbumsBySinger(String singerId) {
+        SingerEntity singerEntity = singerDao.selectById(singerId);
+        if(singerEntity==null) {
+            return null;
+        }
+        List<AlbumEntity> list = albumDao.selectAllAlbumsBySinger(singerId);
         return list;
     }
 
     /**
-     * 查找最新的5个专辑
+     * 查找最新的3个专辑，除了本专辑以外
      * @return
      */
     @Override
-    public List<AlbumEntity> getNewAlbums() {
-        return albumDao.selectNewAlbums();
+    public List<AlbumEntity> getNewAlbums(String id,String singerId) {
+        return albumDao.selectNewAlbums(id,singerId);
     }
 }

@@ -8,7 +8,7 @@
         <result column="list_name" property="listName" />
         <result column="category" property="category" />
         <result column="introduction" property="introduction"/>
-        <result column="like_num" property="like"/>
+        <result column="like_num" property="likeNum"/>
         <result column="tag" property="tag"/>
         <result column="playNum" property="play_num"/>
         <result column="picture" property="picture"/>
@@ -16,6 +16,11 @@
                      javaType="com.zkl.l_music.entity.UserEntity"
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
+
+    <insert id="insert">
+        insert into song_list(id,list_name,category,user_id,introduction,like_num,tag,play_num,picture)
+        values(#{id},#{listName},#{category},#{userId.id},#{introduction},#{likeNum},#{tag},#{playNum},#{picture});
+    </insert>
 
     <select id="selectSongListByUser" resultMap="songListMap">
         SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list

@@ -17,4 +17,6 @@ public interface CommentsDao extends BaseMapper<CommentsEntity> {
 
     IPage selectComments(Page page,String songId);
 
+    List<CommentsEntity> selectCommentsByUser(String userId);
+
 }

@@ -5,8 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zkl.l_music.bo.CommentsBo;
 import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.dao.CommentsDao;
+import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.dao.SongDao;
+import com.zkl.l_music.dao.UserDao;
+import com.zkl.l_music.data.SingerData;
 import com.zkl.l_music.entity.CommentsEntity;
+import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.CommentsLikeService;
 import com.zkl.l_music.service.CommentsService;
@@ -15,6 +19,7 @@ import com.zkl.l_music.util.RequestHolder;
 import com.zkl.l_music.util.UUIDGenerator;
 import com.zkl.l_music.vo.CommentsDetailVo;
 import com.zkl.l_music.vo.CommentsVo;
+import com.zkl.l_music.vo.MyCommentVo;
 import com.zkl.l_music.vo.PageInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -37,16 +42,21 @@ public class CommentsServiceImpl implements CommentsService {
     @Resource
     SongDao songDao;
     @Resource
+    SingerDao singerDao;
+    @Resource
+    UserDao userDao;
+    @Resource
     CommentsLikeService commentsLikeService;
 
     @Override
-    public boolean addComments(CommentsBo commentsBo, UserEntity userEntity) {
+    public boolean addComments(CommentsBo commentsBo, String userId) {
         CommentsEntity commentsEntity = new CommentsEntity();
         commentsEntity.setId(uuidGenerator.generateUUID());
         commentsEntity.setComment(commentsBo.getComment());
         commentsEntity.setLikes(0);
         commentsEntity.setSongId(songDao.selectById(commentsBo.getSongId()));
         commentsEntity.setTime(new Date());
+        UserEntity userEntity = userDao.selectById(userId);
         commentsEntity.setUserId(userEntity);
         commentsEntity.setIsHot(0);
         int res = commentsDao.insert(commentsEntity);
@@ -134,6 +144,24 @@ public class CommentsServiceImpl implements CommentsService {
         commentsVo.setCommentsEntityList(hotList);
         commentsVo.setCommentsPage(pageInfoVo);
         return commentsVo;
+    }
+
+    @Override
+    public List<MyCommentVo> getCommentsByUser(String userId) {
+        List<CommentsEntity> list = commentsDao.selectCommentsByUser(userId);
+        List<MyCommentVo> res = new ArrayList<>();
+        for(int i=0;i<list.size();i++) {
+            MyCommentVo myCommentVo = new MyCommentVo();
+            myCommentVo.setId(list.get(i).getId());
+            myCommentVo.setContent(list.get(i).getComment());
+            myCommentVo.setNum(list.get(i).getLikes());
+            myCommentVo.setTime(list.get(i).getTime());
+            SingerEntity singerEntity = singerDao.selectById(list.get(i).getSongId().getSingerId());
+            String name = singerEntity.getSinger()+"-"+list.get(i).getSongId().getName();
+            myCommentVo.setSongs(name);
+            res.add(myCommentVo);
+        }
+        return res;
     }
 
 }

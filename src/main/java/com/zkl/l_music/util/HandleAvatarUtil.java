@@ -8,12 +8,20 @@ import java.io.*;
 
 public class HandleAvatarUtil {
 
-    public static String save(MultipartFile file) {
+    public static String save(MultipartFile file,int type) {
         String imageName = null;
+        String filePathFinal = "";
         if (file != null) {
-            imageName = "avatar_" + System.currentTimeMillis() + ".png";
-            String split[] = file.getOriginalFilename().split("\\.");
-            String filePathFinal = ConstantUtil.uploadPath + imageName;
+            //头像
+            if(type == 1) {
+                imageName = "avatar_" + System.currentTimeMillis() + ".png";
+                String split[] = file.getOriginalFilename().split("\\.");
+                filePathFinal = ConstantUtil.avatarUpLoadPath + imageName;
+            } else if(type == 2) {//处理封面
+                imageName = "list_pic_" + System.currentTimeMillis() + ".png";
+                String split[] = file.getOriginalFilename().split("\\.");
+                filePathFinal = ConstantUtil.listPicUpLoadPath + imageName;
+            }
             File localFile = new File(filePathFinal);
             if (!localFile.exists()) {
                 localFile.mkdirs();

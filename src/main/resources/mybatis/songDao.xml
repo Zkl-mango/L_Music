@@ -12,27 +12,27 @@
         <result column="picture" property="picture" />
         <result column="lyric" property="lyric" />
         <result column="klyric" property="klyric" />
-        <result column="duration" property="duration" />
+        <result column="like_num" property="likeNum" />
         <result column="category" property="category" />
         <result column="hot" property="hot" />
         <result column="recommend" property="recommend" />
     </resultMap>
 
     <select id="selectSongsByAlbum" resultMap="songMap" >
-        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,duration,category,hot,recommend
-        FROM song WHERE album_id = #{album_id};
+        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,like_num,category,hot,recommend
+        FROM song WHERE album_id = #{album_id}
     </select>
 
     <select id="selectSongsByCategory" resultMap="songMap" >
-        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,duration,category,hot,recommend
+        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,like_num,category,hot,recommend
         FROM song WHERE category = #{category}
-        ORDER BY hot desc;
+        ORDER BY hot desc
     </select>
 
     <select id="selectSongsBySinger" resultMap="songMap" >
-        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,duration,category,hot,recommend
+        SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,like_num,category,hot,recommend
         FROM song WHERE singer_id = #{singerId}
-        ORDER BY hot desc;
+        ORDER BY hot desc
     </select>
 
 </mapper>

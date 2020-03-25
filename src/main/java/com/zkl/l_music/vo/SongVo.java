@@ -18,9 +18,8 @@ public class SongVo {
     private String picture;         /*歌曲封面*/
     private String lyric;           /*歌词*/
     private String klyric;           /*歌词*/
-    private String duration;        /*歌曲时长*/
+    private int like;               /*点赞数*/
     private int category;           /*歌曲类别*/
     private int hot;                /*歌曲热度*/
     private int recommend;          /*歌曲评论数*/
-    private int increase;           /*歌曲被添加次数*/
 }

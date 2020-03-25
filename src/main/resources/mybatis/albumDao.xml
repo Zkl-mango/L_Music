@@ -11,6 +11,7 @@
         <result column="picture" property="picture"/>
         <result column="type" property="type"/>
         <result column="songs" property="songs" />
+        <result column="singer_list" property="singerList"/>
         <association property="singerId" column="singer_id"
                      javaType="com.zkl.l_music.entity.SingerEntity"
                      select="com.zkl.l_music.dao.SingerDao.selectById"/>
@@ -21,14 +22,24 @@
         values(#{id},#{name},#{picture},#{time},#{hot},#{singerId.id},#{type},#{songs},#{singerList});
     </insert>
 
+    <select id="selectById" resultMap="albumMap">
+        SELECT id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
+        WHERE id = #{id}
+    </select>
+
     <select id="selectAlbumsBySinger" resultMap="albumMap">
+        SELECT id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
+        WHERE singer_id = #{singerId} ORDER BY time desc
+    </select>
+
+    <select id="selectAllAlbumsBySinger" resultMap="albumMap">
         SELECT id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
         WHERE singer_id = #{singerId} ORDER BY time desc;
     </select>
 
     <select id="selectNewAlbums" resultMap="albumMap">
-        SELECT TOP 5 id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
-        ORDER BY time desc;
+        SELECT id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
+        WHERE id != #{id} AND singer_id = #{singerId} ORDER BY time desc LIMIT 3;
     </select>
 
 </mapper>

@@ -15,6 +15,6 @@ public interface SongDao extends BaseMapper<SongEntity> {
 
     IPage<SongEntity> selectSongsByCategory(Page page,int category);
 
-    IPage<SongEntity> selectSongsBySinger(Page page,String SingerId);
+    IPage<SongEntity> selectSongsBySinger(Page page,String singerId);
 
 }

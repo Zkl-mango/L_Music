@@ -20,12 +20,12 @@
     </delete>
 
     <select id="selectSongDetailsByListId" resultMap="songDetailsMap">
-        SELECT id,create_at,deleted,song_list,song_id FROM song_detials
+        SELECT id,create_at,deleted,song_list,song_id FROM song_details
         WHERE song_list = #{songList} AND deleted=0 ORDER BY create_at desc;
     </select>
 
     <select id="countSongsByList" resultType="int">
-        SELECT count(id) FROM song_detials
+        SELECT count(id) FROM song_details
         WHERE song_list = #{songList} AND deleted=0;
     </select>
 

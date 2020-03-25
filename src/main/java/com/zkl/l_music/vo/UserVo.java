@@ -1,6 +1,7 @@
 package com.zkl.l_music.vo;
 
 import com.zkl.l_music.dto.FollowsDto;
+import com.zkl.l_music.util.ConstantUtil;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class UserVo {
     }
 
     public String getAvatar() {
-        return avatar;
+        return ConstantUtil.avatardownloadPath + avatar;
     }
 
     public void setAvatar(String avatar) {

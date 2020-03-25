@@ -11,4 +11,5 @@ public interface CommentsLikeDao extends BaseMapper<CommentsLikeEntity> {
 
     CommentsLikeEntity selectCommentsLike(String userId,String commentId);
 
+    List<CommentsLikeEntity> selectCommentsIsLike(String userId);
 }

@@ -2,6 +2,7 @@ package com.zkl.l_music.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zkl.l_music.util.ConstantUtil;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ public class SongListEntity implements Serializable {
     private int category;           /*列表类型，1：自定义；2：我喜欢的*/
     private UserEntity userId;      /*所属用户*/
     private String introduction;    /*简介*/
-    private int like;               /*点赞数*/
+    private int likeNum;               /*点赞数*/
     private String tag;             /*列表标签*/
     private int playNum;            /*播放量*/
     private String picture;         /*封面*/
@@ -66,12 +67,12 @@ public class SongListEntity implements Serializable {
         this.introduction = introduction;
     }
 
-    public int getLike() {
-        return like;
+    public int getLikeNum() {
+        return likeNum;
     }
 
-    public void setLike(int like) {
-        this.like = like;
+    public void setLikeNum(int likeNum) {
+        this.likeNum = likeNum;
     }
 
     public String getTag() {
@@ -106,7 +107,7 @@ public class SongListEntity implements Serializable {
                 ", category=" + category +
                 ", userId=" + userId +
                 ", introduction='" + introduction + '\'' +
-                ", like=" + like +
+                ", likeNum=" + likeNum +
                 ", tag='" + tag + '\'' +
                 ", playNum=" + playNum +
                 ", picture='" + picture + '\'' +

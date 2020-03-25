@@ -2,6 +2,7 @@ package com.zkl.l_music.service;
 
 import com.zkl.l_music.entity.CommentsEntity;
 import com.zkl.l_music.entity.CommentsLikeEntity;
+import com.zkl.l_music.vo.CommentLikesVo;
 import com.zkl.l_music.vo.CommentsDetailVo;
 
 import java.util.List;
@@ -66,4 +67,11 @@ public interface CommentsLikeService {
      * @return
      */
     CommentsDetailVo getCommentByUser(String userId, CommentsEntity commentsEntity);
+
+    /**
+     * 查找用户个人的点赞列表
+     * @param userId
+     * @return
+     */
+    List<CommentLikesVo> getCommentLikeByUser(String userId);
 }

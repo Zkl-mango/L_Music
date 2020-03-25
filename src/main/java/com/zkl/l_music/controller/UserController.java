@@ -3,13 +3,19 @@ package com.zkl.l_music.controller;
 import com.zkl.l_music.bo.UserBo;
 import com.zkl.l_music.bo.UserPwdBo;
 import com.zkl.l_music.entity.AuthEntity;
+import com.zkl.l_music.entity.CommentsEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.AuthService;
+import com.zkl.l_music.service.CommentsLikeService;
+import com.zkl.l_music.service.CommentsService;
 import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.HandleAvatarUtil;
 import com.zkl.l_music.util.RequestHolder;
 import com.zkl.l_music.util.ReturnCode;
+import com.zkl.l_music.vo.CommentLikesVo;
+import com.zkl.l_music.vo.CommentsVo;
+import com.zkl.l_music.vo.MyCommentVo;
 import com.zkl.l_music.vo.UserVo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +30,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.util.List;
+
 @Slf4j
 @RestController
 @CrossOrigin
@@ -34,6 +42,10 @@ public class UserController {
     UserService userService;
     @Resource
     AuthService authService;
+    @Resource
+    CommentsService commentsService;
+    @Resource
+    CommentsLikeService commentsLikeService;
 
     /**
      * 注册新用户
@@ -41,7 +53,7 @@ public class UserController {
      * @return
      */
     @PostMapping(value = "")
-    public ResponseEntity addUser(HttpServletRequest request, @RequestBody @Valid UserBo userBo) throws Exception {
+    public ResponseEntity addUser( @RequestBody @Valid UserBo userBo) throws Exception {
         if(StringUtils.isBlank(userBo.getPassword())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail("密码为空，请重新输入"));
         }
@@ -55,12 +67,11 @@ public class UserController {
 
     /**
      * 修改用户基本信息
-     * @param request
      * @param userBo
      * @return
      */
     @PutMapping(value="/{id}")
-    public ResponseEntity updateUser(HttpServletRequest request, @PathVariable String id,@RequestBody @Valid UserBo userBo) {
+    public ResponseEntity updateUser( @PathVariable String id,@RequestBody @Valid UserBo userBo) {
         if(StringUtils.isBlank(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
@@ -144,7 +155,7 @@ public class UserController {
      */
     @GetMapping(value = "/judge_user/{name}/{type}")
     public ResponseEntity judgeUserByNameAndPhone(HttpServletRequest request,@PathVariable String name,@PathVariable int type) {
-        String id = (String)request.getSession().getAttribute("userId");
+        String id = request.getHeader("userId");
         boolean res = userService.judgeUserNameAndPhone(name,type,id);
         if(res) {
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
@@ -155,5 +166,29 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail("该昵称已经存在"));
             }
         }
+    }
+
+    /**
+     * 获取用户发表的评论
+     * @param request
+     * @return
+     */
+    @GetMapping(value = "/comments")
+    public ResponseEntity getUserComment(HttpServletRequest request) {
+        String id = request.getHeader("userId");
+        List<MyCommentVo> commentsList = commentsService.getCommentsByUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(commentsList));
+    }
+
+    /**
+     * 获取用户点赞的评论
+     * @param request
+     * @return
+     */
+    @GetMapping(value = "/likes")
+    public ResponseEntity getUserLikeComment(HttpServletRequest request) {
+        String id = request.getHeader("userId");
+        List<CommentLikesVo> commentsList = commentsLikeService.getCommentLikeByUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(commentsList));
     }
 }

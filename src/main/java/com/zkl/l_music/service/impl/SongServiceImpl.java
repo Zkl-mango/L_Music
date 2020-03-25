@@ -120,7 +120,7 @@ public class SongServiceImpl implements SongService {
         List<SingerEntity> singerList = new ArrayList<>();
         SongVo songVo = new SongVo();
         String[] str = songEntity.getSingerId().split(",");
-        BeanUtils.copyProperties(songVo, songEntity);
+        BeanUtils.copyProperties(songEntity,songVo);
         for (String singerId : str) {
             SingerEntity singerEntity = singerDao.selectById(singerId);
             singerList.add(singerEntity);

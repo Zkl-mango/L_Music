@@ -3,6 +3,7 @@ package com.zkl.l_music.controller;
 import com.zkl.l_music.data.AlbumData;
 import com.zkl.l_music.data.SingerData;
 import com.zkl.l_music.data.SongData;
+import com.zkl.l_music.data.TagData;
 import com.zkl.l_music.entity.AlbumEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.AlbumService;
@@ -31,6 +32,8 @@ public class DataController {
     AlbumService albumService;
     @Resource
     SongData songData;
+    @Resource
+    TagData tagData;
 
     //添加歌手信息
     @RequestMapping("/singer/{cat}")
@@ -58,11 +61,18 @@ public class DataController {
     public ResponseEntity getSongFromApi(@PathVariable int cat) {
         List<SingerEntity>singerList = singerService.getSingerByCategory(cat);
         for(int j=0;j<singerList.size();j++) {
-            List<AlbumEntity> list =  albumService.getAlbumsBySinger(singerList.get(j).getId());
+            List<AlbumEntity> list =  albumService.getAllAlbumsBySinger(singerList.get(j).getId());
             for(int i=0;i<list.size();i++) {
                 songData.getSongData(list.get(i).getId());
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body("ok");
+    }
+
+    //添加类别信息
+    @RequestMapping("/tag")
+    public ResponseEntity<Void> getTagFromApi() {
+        tagData.getTagData();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

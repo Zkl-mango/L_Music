@@ -4,9 +4,11 @@ import com.zkl.l_music.bo.LoginBo;
 import com.zkl.l_music.bo.UserBo;
 import com.zkl.l_music.bo.UserPwdBo;
 import com.zkl.l_music.dao.SingerDao;
+import com.zkl.l_music.dao.SongListDao;
 import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.dto.FollowsDto;
 import com.zkl.l_music.entity.SingerEntity;
+import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.AuthService;
 import com.zkl.l_music.service.LikeListService;
@@ -33,6 +35,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     SingerDao singerDao;
     @Resource
+    SongListDao songListDao;
+    @Resource
     UUIDGenerator uuidGenerator;
     @Resource
     AuthService authService;
@@ -56,6 +60,13 @@ public class UserServiceImpl implements UserService {
         userEntity.setAvatar(avatar);
         log.info("处理头像信息结束-----");
         int res = userDao.insert(userEntity);
+        //生成默认 我喜欢 歌单
+        SongListEntity songListEntity = new SongListEntity();
+        songListEntity.setId( uuidGenerator.generateUUID());
+        songListEntity.setCategory(2);
+        songListEntity.setListName("我喜欢");
+        songListEntity.setUserId(userEntity);
+        songListDao.insert(songListEntity);
         if(res == 1) {
             return userEntity;
         }
@@ -65,8 +76,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUserAvatar(MultipartFile file,String id) {
         log.info("开始更新头像信息-----");
-        String avatar = HandleAvatarUtil.save(file);
+        String avatar = HandleAvatarUtil.save(file,1);
         UserEntity userEntity = userDao.selectById(id);
+        if(userEntity == null) {
+            return false;
+        }
         userEntity.setAvatar(avatar);
         log.info("更新头像信息结束-----");
         userDao.updateById(userEntity);
@@ -126,6 +140,8 @@ public class UserServiceImpl implements UserService {
                 FollowsDto followsDto = new FollowsDto();
                 followsDto.setId(singerEntity.getId());
                 followsDto.setName(singerEntity.getSinger());
+                followsDto.setPicture(singerEntity.getPicture());
+                followsDto.setFans(singerEntity.getFans());
                 follows.add(followsDto);
             }
             userVo.setFollowsList(follows);
@@ -133,7 +149,7 @@ public class UserServiceImpl implements UserService {
         //查找自建歌单
         userVo.setSongListVos(songListService.getSongListByUser(userEntity.getId(),1));
         //查找收藏歌单
-        userVo.setLikeListVos(likeListService.getSongListByUser(userEntity.getId(),3));
+        userVo.setLikeListVos(likeListService.getLikeListByUser(userEntity.getId(),ConstantUtil.listType));
         return userVo;
     }
 

@@ -31,4 +31,8 @@
         WHERE song_id = #{songId} AND is_hot=0 ORDER BY time desc;
     </select>
 
+    <select id="selectCommentsByUser" resultMap="commentsMap">
+        SELECT id,comment,likes,time,is_hot,user_id,song_id FROM comments
+        WHERE user_id = #{userId} ORDER BY time desc;
+    </select>
 </mapper>

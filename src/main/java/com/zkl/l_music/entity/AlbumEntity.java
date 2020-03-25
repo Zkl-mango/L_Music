@@ -24,7 +24,7 @@ public class AlbumEntity implements Serializable {
     private String picture;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date time;      /*发表时间*/
-    private int hot;        /*热度*/
+    private int hot;        /*热度=点赞数*/
     private String type;    /*类型*/
     private int songs;      /*歌曲数*/
     private String singerList;      /*多个歌手的id集合*/
