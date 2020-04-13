@@ -1,15 +1,13 @@
 package com.zkl.l_music.controller;
 
+import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.bo.SongDetailBo;
 import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.entity.UserEntity;
-import com.zkl.l_music.service.SongDetailsService;
-import com.zkl.l_music.service.SongListService;
-import com.zkl.l_music.service.TagService;
+import com.zkl.l_music.service.*;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
-import com.zkl.l_music.vo.SongListVo;
-import com.zkl.l_music.vo.TagVo;
+import com.zkl.l_music.vo.*;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -21,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,10 @@ public class SongListController {
     SongDetailsService songDetailsService;
     @Resource
     TagService tagService;
-
+    @Resource
+    SongService songService;
+    @Resource
+    HistoryListService historyListService;
     /**
      * 创建歌单
      * @param request
@@ -81,6 +83,17 @@ public class SongListController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
     }
 
+    @PutMapping(value = "/{id}/{type}/{flag}")
+    public ResponseEntity likeSongList(HttpServletRequest request,@PathVariable String id,@PathVariable int flag,@PathVariable int type) {
+        String userId = request.getHeader("userId");
+        boolean res = songListService.updateSongListNum(id,flag,type,userId);
+        if(flag == 1) {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("已收藏到我的喜欢"));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消收藏成功"));
+        }
+    }
+
     /**
      * 删除歌单
      * @param ids
@@ -105,21 +118,75 @@ public class SongListController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
         List<SongListVo> list = songListService.getSongListByUser(userId,1);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+        List<SongListVo> likeList = songListService.getSongListByUser(userId,2);
+        Map res = new HashMap();
+        res.put("list",list);
+        res.put("likeList",likeList);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
+
+
     /**
-     * 获取歌单详情
+     * 修改时获取歌单详情和标签列表
      * @param id
      * @return
      */
-    @GetMapping(value = "/{id}")
-    public ResponseEntity getSongList(@PathVariable String id) {
-        SongListVo songListVo = songListService.getSongListById(id);
+    @GetMapping(value = "/detail/{id}")
+    public ResponseEntity getUpdateSongList(HttpServletRequest request,@PathVariable String id) {
+        String userId = request.getHeader("userId");
+        SongListVo songListVo = songListService.getSongListById(id,userId);
         List<TagVo> tagList = tagService.getTagList();
         Map<Object,Object> res = new HashMap<>();
         res.put("detail",songListVo);
         res.put("tagList",tagList);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+    }
+
+    /**
+     * 获取歌单信息以及歌单下歌曲信息
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/{id}")
+    public ResponseEntity getSongList(HttpServletRequest request,@PathVariable String id) {
+        String userId = request.getHeader("userId");
+        Map<Object,Object> res = new HashMap<>();
+        if(userId.equals("undefined")) {
+            userId = null;
+        }
+        if(id.equals("hot")) {
+            List<SongListDetailVo> list = songService.getSongsByHot();
+            res.put("songs",list);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+        }
+        if(id.equals("history")) {
+            List<HistoryListVo> historyListVos = historyListService.getHistoryListByUser(userId);
+            res.put("songs",historyListVos);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+        }
+        SongListVo songListVo = songListService.getSongListById(id,userId);
+        List<SongListDetailVo> songListDetail = songDetailsService.getSongDetailsByList(id);
+        res.put("detail",songListVo);
+        res.put("songs",songListDetail);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+    }
+
+    /**
+     * 通过标签获取歌单
+     * @param tag
+     * @param pageBo
+     * @return
+     */
+    @GetMapping(value = "/all/{tag}")
+    public ResponseEntity getAllSongList(@PathVariable String tag, PageBo pageBo) {
+        Map<Object,Object> res = new HashMap<>();
+        if(tag.equals("推荐")) {
+            List<SongListVo> hotList = songListService.getLikeSongList();
+            res.put("hotList",hotList);
+        }
+        PageInfoVo songPage = songListService.getSongListByTag(pageBo,tag);
+        res.put("songPage",songPage);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
@@ -142,7 +209,7 @@ public class SongListController {
      * @param songId
      * @return
      */
-    @PutMapping(value = "/details/{songId}")
+    @DeleteMapping(value = "/delete/{songId}")
     public ResponseEntity deteledSongDetails(@PathVariable String songId) {
         boolean res = songDetailsService.updateSongDetails(songId);
         if(res) {

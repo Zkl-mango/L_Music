@@ -1,6 +1,7 @@
 package com.zkl.l_music.service;
 
 import com.zkl.l_music.entity.AlbumEntity;
+import com.zkl.l_music.vo.AlbumVo;
 import com.zkl.l_music.vo.SongListVo;
 
 import java.util.List;
@@ -24,5 +25,5 @@ public interface LikeListService {
      * @param type
      * @return
      */
-    List<AlbumEntity> getLikeListAlbumByUser(String userId, int type);
+    List<AlbumVo> getLikeListAlbumByUser(String userId, int type);
 }

@@ -51,18 +51,19 @@ public class SingerController {
      * @return
      */
     @GetMapping(value="/singerList/{category}/{sex}")
-    public ResponseEntity getSingerList(HttpServletRequest request, @PathVariable int category, @PathVariable String sex) {
+    public ResponseEntity getSingerList(HttpServletRequest request, @PathVariable int category, @PathVariable String sex,
+                                        PageBo pageBo) {
         String userId = request.getHeader("userId");
         if(userId.equals("undefined")) {
             userId = null;
         }
-        List<SingerListVo> singerListVos = singerService.getSingers(sex,category,userId);
+        List<SingerListVo> singerListVos = singerService.getSingers(pageBo,sex,category,userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(singerListVos));
     }
 
 
     /**
-     * 获取歌曲详情
+     * 获取歌手详情
      * @param id
      * @param pageBo
      * @return

@@ -26,7 +26,7 @@ public class LikeTask extends QuartzJobBean {
         log.info("LikeTask-------- {}", sdf.format(new Date()));
 
         //将 Redis 里的点赞信息同步到数据库里
-        commentsLikeService.getLikedsFromRedisToDB();
+//        commentsLikeService.getLikedsFromRedisToDB();
 
     }
 }

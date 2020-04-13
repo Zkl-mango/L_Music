@@ -23,6 +23,8 @@ public interface AlbumDao extends BaseMapper<AlbumEntity> {
      * 查找最新的3个专辑，除了本专辑以外
      * @return
      */
-    List<AlbumEntity> selectNewAlbums(String id,String singerId);
+    List<AlbumEntity> selectNewAlbumsBySinger(String id,String singerId);
+
+    List<AlbumEntity> selectNewAlbum();
 
 }

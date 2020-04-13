@@ -1,13 +1,11 @@
 package com.zkl.l_music.controller;
 
-import com.zkl.l_music.data.AlbumData;
-import com.zkl.l_music.data.SingerData;
-import com.zkl.l_music.data.SongData;
-import com.zkl.l_music.data.TagData;
+import com.zkl.l_music.data.*;
 import com.zkl.l_music.entity.AlbumEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.AlbumService;
 import com.zkl.l_music.service.SingerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/data")
+@Slf4j
 public class DataController {
 
     @Resource
@@ -34,6 +33,8 @@ public class DataController {
     SongData songData;
     @Resource
     TagData tagData;
+    @Resource
+    RankData rankData;
 
     //添加歌手信息
     @RequestMapping("/singer/{cat}")
@@ -60,10 +61,21 @@ public class DataController {
     @RequestMapping("/song/{cat}")
     public ResponseEntity getSongFromApi(@PathVariable int cat) {
         List<SingerEntity>singerList = singerService.getSingerByCategory(cat);
-        for(int j=0;j<singerList.size();j++) {
+//        singerList = singerList.subList(1652,singerList.size());
+        for(int j=244;j<singerList.size();j++) {
             List<AlbumEntity> list =  albumService.getAllAlbumsBySinger(singerList.get(j).getId());
-            for(int i=0;i<list.size();i++) {
-                songData.getSongData(list.get(i).getId());
+            int length = 101;
+            if(list.size() < 101) {
+                length = list.size();
+            }
+            for(int i=0;i<length;i++) {
+                try{
+                    songData.getSongData(list.get(i).getId());
+                } catch (Exception e) {
+                    log.info(e.toString());
+                    System.out.println("error"+j);
+                }
+                System.out.println(j+"  page"+i);
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body("ok");
@@ -73,6 +85,12 @@ public class DataController {
     @RequestMapping("/tag")
     public ResponseEntity<Void> getTagFromApi() {
         tagData.getTagData();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @RequestMapping("/rank")
+    public ResponseEntity getRankFromApi() {
+        rankData.getRankData();
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

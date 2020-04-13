@@ -12,6 +12,7 @@ import com.zkl.l_music.entity.SongEntity;
 import com.zkl.l_music.service.SongService;
 import com.zkl.l_music.util.PageUtils;
 import com.zkl.l_music.vo.PageInfoVo;
+import com.zkl.l_music.vo.SongListDetailVo;
 import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -116,7 +117,7 @@ public class SongServiceImpl implements SongService {
         return songVoList;
     }
 
-    private SongVo songChangeVo(SongEntity songEntity) {
+    public SongVo songChangeVo(SongEntity songEntity) {
         List<SingerEntity> singerList = new ArrayList<>();
         SongVo songVo = new SongVo();
         String[] str = songEntity.getSingerId().split(",");
@@ -129,5 +130,25 @@ public class SongServiceImpl implements SongService {
         songVo.setAlbum(albumEntity);
         songVo.setSingerList(singerList);
         return songVo;
+    }
+
+    @Override
+    public List<SongListDetailVo> getSongsByHot() {
+        List<SongEntity> list = songDao.selectSongsByHot();
+        List<SongVo> songDetails = this.songDetails(list);
+        List<SongListDetailVo> songListDetail = new ArrayList<>();
+        for(int i=0;i<songDetails.size();i++) {
+            SongListDetailVo songListDetailVo = new SongListDetailVo();
+            songListDetailVo.setSongVo(songDetails.get(i));
+            songListDetail.add(songListDetailVo);
+        }
+        return songListDetail;
+    }
+
+    @Override
+    public List<SongVo> getSongsByRecomment() {
+        List<SongEntity> list = songDao.selectSongsByRecomment();
+        List<SongVo> songDetails = this.songDetails(list);
+        return songDetails;
     }
 }

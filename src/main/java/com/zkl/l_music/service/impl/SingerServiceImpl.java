@@ -115,7 +115,7 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
-    public List<SingerListVo> getSingers(String sex,int category,String userId) {
+    public List<SingerListVo> getSingers(PageBo pageBo,String sex,int category,String userId) {
         if(sex.equals("全部")) {
             sex = null;
         }
@@ -123,8 +123,10 @@ public class SingerServiceImpl implements SingerService {
         if(!StringUtils.isBlank(userId)) {
             user = userDao.selectById(userId);
         }
-        List<SingerEntity> list = singerDao.selectSingerList(sex,category);
-        List<SingerListVo> singerListVos = SortByChinese.sort(list,user);
+        Page page = new Page(pageBo.getPage(),pageBo.getSize());
+        IPage<SingerEntity> ipage = singerDao.selectSingerList(page,sex,category);
+
+        List<SingerListVo> singerListVos = SortByChinese.sort(ipage.getRecords(),user);
         //热度
         List<SingerEntity> hotlist = singerDao.selectHotTop(sex,category);
         List<SingerVo> singerVos = new ArrayList<>();

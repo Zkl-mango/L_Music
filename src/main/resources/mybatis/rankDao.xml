@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd//mybatis-3-mapper.dtd">
+<mapper namespace="com.zkl.l_music.dao.RankDao">
+
+    <resultMap id="rankMap" type="RankEntity" >
+        <id column="id" property="id"/>
+        <result column="rank_name" property="rankName" />
+        <result column="play_num" property="playNum" />
+        <result column="picture" property="picture" />
+        <result column="recomment" property="recomment"/>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <select id="selectRankByType" resultMap="rankMap">
+        SELECT id,rank_name,play_num,picture,recomment,type
+        FROM rank WHERE type = #{type};
+    </select>
+
+    <select id="selectRankByRecomment" resultMap="rankMap">
+        SELECT id,rank_name,play_num,picture,recomment,type
+        FROM rank WHERE recomment = #{recomment};
+    </select>
+
+</mapper>

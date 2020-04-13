@@ -9,5 +9,9 @@ import java.util.List;
 @Mapper
 public interface HistoryListDao extends BaseMapper<HistoryListEntity> {
 
+    int deletedHistorys(String userId,int type);
+
     List<HistoryListEntity> selectHistorysByUser(String userId,int type);
+
+    HistoryListEntity selectHistoryByUserAndSong(String userId,String linkId,int type);
 }

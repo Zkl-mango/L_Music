@@ -18,6 +18,7 @@ public class RankListEntity implements Serializable {
     private String id;
     private RankEntity rankId;
     private SongEntity songId;
+    private int recomment;
 
     public String getId() {
         return id;
@@ -43,12 +44,21 @@ public class RankListEntity implements Serializable {
         this.songId = songId;
     }
 
+    public int getRecomment() {
+        return recomment;
+    }
+
+    public void setRecomment(int recomment) {
+        this.recomment = recomment;
+    }
+
     @Override
     public String toString() {
         return "RankListEntity{" +
                 "id='" + id + '\'' +
                 ", rankId=" + rankId +
                 ", songId=" + songId +
+                ", recomment=" + recomment +
                 '}';
     }
 }

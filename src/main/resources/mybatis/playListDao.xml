@@ -5,9 +5,7 @@
 
     <resultMap id="playListMap" type="PlayListEntity" >
         <id column="id" property="id"/>
-        <result column="comment" property="comment" />
-        <result column="likes" property="likes" />
-        <result column="time" property="time" />
+        <result column="is_play" property="isPlay" />
         <association property="userId" column="user_id"
                      javaType="com.zkl.l_music.entity.UserEntity"
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
@@ -16,5 +14,18 @@
                      select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
+    <insert id="insertPlayList">
+        insert into play_list(id,is_play,user_id,song_id)
+        values(#{id},#{isPlay},#{userId},#{songId});
+    </insert>
+
+    <delete id="deletedByUser" parameterType="String">
+        DELETE FROM play_list WHERE user_id = #{userId};
+    </delete>
+
+    <select id="selectPlaysByUser" resultMap="playListMap">
+        Select id,is_play,user_id,song_id FROM play_list
+        WHERE user_id = #{userId};
+    </select>
 
 </mapper>

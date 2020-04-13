@@ -37,9 +37,14 @@
         WHERE singer_id = #{singerId} ORDER BY time desc;
     </select>
 
-    <select id="selectNewAlbums" resultMap="albumMap">
+    <select id="selectNewAlbumsBySinger" resultMap="albumMap">
         SELECT id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
         WHERE id != #{id} AND singer_id = #{singerId} ORDER BY time desc LIMIT 3;
     </select>
 
+    <select id="selectNewAlbum" resultMap="albumMap">
+        SELECT id,name,picture,time,hot,singer_id,type,songs,singer_list FROM album
+        where time &lt; now()
+         ORDER BY time desc LIMIT 3;
+    </select>
 </mapper>

@@ -6,6 +6,7 @@ import com.zkl.l_music.dao.SongDetailsDao;
 import com.zkl.l_music.dao.SongListDao;
 import com.zkl.l_music.entity.SongDetailsEntity;
 import com.zkl.l_music.entity.SongEntity;
+import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.service.SongDetailsService;
 import com.zkl.l_music.service.SongService;
 import com.zkl.l_music.util.ConstantUtil;
@@ -38,12 +39,22 @@ public class SongDetailsServiceImpl implements SongDetailsService {
 
     @Override
     public boolean addSongDetails(SongDetailBo songDetailBo) {
-        SongDetailsEntity songDetailsEntity = new SongDetailsEntity();
+        SongDetailsEntity songDetailsEntity  = songDetailsDao.selectSongDetailsBySongAndList(songDetailBo.getSongList(),songDetailBo.getSongId());
+        if(songDetailsEntity != null) {
+            return false;
+        }
+        songDetailsEntity = new SongDetailsEntity();
         songDetailsEntity.setId(uuidGenerator.generateUUID());
         songDetailsEntity.setDeleted(ConstantUtil.STATUS_SUCCESS);
         songDetailsEntity.setCreateAt(new Date());
-        songDetailsEntity.setSongId(songDao.selectById(songDetailBo.getSongId()));
-        songDetailsEntity.setSongList(songListDao.selectById(songDetailBo.getSongList()));
+        SongEntity songEntity = songDao.selectById(songDetailBo.getSongId());
+        songDetailsEntity.setSongId(songEntity);
+        SongListEntity songListEntity = songListDao.selectById(songDetailBo.getSongList());
+        songDetailsEntity.setSongList(songListEntity);
+        if(songListEntity.getListName().equals("我喜欢")) {
+            songEntity.setLikeNum(songEntity.getLikeNum()+1);
+            songDao.updateById(songEntity);
+        }
         int res = songDetailsDao.insert(songDetailsEntity);
         if(res == 1) {
             return true;

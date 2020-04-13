@@ -6,6 +6,7 @@ import com.zkl.l_music.entity.AlbumEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.service.AlbumService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -38,6 +39,9 @@ public class AlbumData {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             String id = jsonObject.getString("id");
             String name = jsonObject.getString("name");
+            if(StringUtils.isBlank(name)) {
+                name = "未知专辑";
+            }
             String type = jsonObject.getString("type");
             int songs = jsonObject.getInteger("size");
             String picture = jsonObject.getString("blurPicUrl");
@@ -52,7 +56,8 @@ public class AlbumData {
 
             AlbumEntity album = albumService.getAlbumEntityById(id);
             if(album!=null) {
-                if(!album.getSingerList().equals(singer.getId())) {
+                if(!album.getSingerList().contains(singer.getId())) {
+                    album.setSingerId(null);
                     album.setSingerList(album.getSingerList()+","+singer.getId());
                     albumService.updateAlbum(album);
                 }
@@ -68,7 +73,7 @@ public class AlbumData {
                 albumEntity.setHot(0);
                 albumEntity.setSingerList(singer.getId());
                 albumService.addAlbum(albumEntity);
-                log.info("new albums------"+albumEntity);
+                log.info(page+"new albums------"+albumEntity);
             }
 
         }

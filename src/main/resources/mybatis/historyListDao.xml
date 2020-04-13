@@ -13,9 +13,22 @@
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
 
+    <insert id="insert">
+        insert into history_list(id,link_id,user_id,time,type)
+        values(#{id},#{linkId},#{userId.id},#{time},#{type});
+    </insert>
+
+    <delete id="deletedHistorys">
+        DELETE FROM history_list WHERE user_id = #{userId} AND type = #{type};
+    </delete>
+
     <select id="selectHistorysByUser" resultMap="historyListMap">
         SELECT id,link_id,user_id,time,type FROM history_list
         WHERE user_id = #{userId} AND type = #{type} ORDER BY time desc LIMIT 50 ;
     </select>
 
+    <select id="selectHistoryByUserAndSong" resultMap="historyListMap">
+        SELECT id,link_id,user_id,time,type FROM history_list
+        WHERE user_id = #{userId} AND link_id = #{linkId} AND type = #{type} ;
+    </select>
 </mapper>

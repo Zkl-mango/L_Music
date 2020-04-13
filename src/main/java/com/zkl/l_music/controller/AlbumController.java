@@ -59,7 +59,7 @@ public class AlbumController {
      */
     @GetMapping(value = "/list")
     public ResponseEntity getNewAlbums(String id,String singerId) {
-        List list = albumService.getNewAlbums(id,singerId);
+        List list = albumService.getNewAlbumsBySinger(id,singerId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
     }
 

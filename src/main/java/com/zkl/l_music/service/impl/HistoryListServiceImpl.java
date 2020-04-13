@@ -1,15 +1,13 @@
 package com.zkl.l_music.service.impl;
 
-import com.zkl.l_music.dao.AlbumDao;
-import com.zkl.l_music.dao.HistoryListDao;
-import com.zkl.l_music.dao.SongDao;
-import com.zkl.l_music.dao.SongListDao;
+import com.zkl.l_music.dao.*;
 import com.zkl.l_music.entity.*;
 import com.zkl.l_music.service.HistoryListService;
 import com.zkl.l_music.service.SongDetailsService;
 import com.zkl.l_music.service.SongService;
 import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.UUIDGenerator;
+import com.zkl.l_music.vo.AlbumVo;
 import com.zkl.l_music.vo.HistoryListVo;
 import com.zkl.l_music.vo.SongListVo;
 import com.zkl.l_music.vo.SongVo;
@@ -32,7 +30,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     @Resource
     UUIDGenerator uuidGenerator;
     @Resource
-    SongDao songDao;
+    UserDao userDao;
     @Resource
     AlbumDao albumDao;
     @Resource
@@ -43,13 +41,20 @@ public class HistoryListServiceImpl implements HistoryListService {
     SongService songService;
 
     @Override
-    public boolean addHistoryList(String songId, UserEntity userEntity) {
-        HistoryListEntity historyListEntity = new HistoryListEntity();
+    public boolean addHistoryList(String songId, String userId,int type) {
+        HistoryListEntity historyListEntity = historyListDao.selectHistoryByUserAndSong(userId,songId,type);
+        if(historyListEntity != null) {
+            historyListEntity.setTime(new Date());
+            historyListEntity.setUserId(null);
+            historyListDao.updateById(historyListEntity);
+            return true;
+        }
+        historyListEntity = new HistoryListEntity();
         historyListEntity.setId(uuidGenerator.generateUUID());
         historyListEntity.setTime(new Date());
-        historyListEntity.setUserId(userEntity);
-        SongEntity songEntity = songDao.selectById(songId);
-        historyListEntity.setLinkId(songEntity.getId());
+        historyListEntity.setUserId(userDao.selectById(userId));
+        historyListEntity.setLinkId(songId);
+        historyListEntity.setType(type);
         int res = historyListDao.insert(historyListEntity);
         if(res == 1) {
             return true;
@@ -73,6 +78,12 @@ public class HistoryListServiceImpl implements HistoryListService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean deleteHistoryLists(String userId, int type) {
+        int res = historyListDao.deletedHistorys(userId,type);
+        return true;
     }
 
     @Override
@@ -101,30 +112,37 @@ public class HistoryListServiceImpl implements HistoryListService {
     }
 
     @Override
-    public List<SongListVo> getHistoryAlbumSongByUser(String userId, int type) {
+    public List<SongListVo> getHistorySongByUser(String userId, int type) {
         List<HistoryListEntity> list = historyListDao.selectHistorysByUser(userId,type);
         List<SongListVo> songListVos = new ArrayList<>();
-        //专辑历史
-        if(type == ConstantUtil.albumType) {
-            for(int i=0;i<list.size();i++) {
-                AlbumEntity albumEntity = albumDao.selectById(list.get(i).getLinkId());
-                SongListVo songListVo = new SongListVo();
-                BeanUtils.copyProperties(albumEntity,songListVo);
-                songListVo.setListName(albumEntity.getName());
-                songListVo.setSongNum(albumEntity.getSongs());
-                songListVos.add(songListVo);
-            }
-        }
         //歌单专辑历史
-        else if(type == ConstantUtil.songType) {
+        if(type == ConstantUtil.listType) {
             for(int i=0;i<list.size();i++) {
                 SongListEntity songListEntity = songListDao.selectById(list.get(i).getLinkId());
                 SongListVo songListVo = new SongListVo();
                 BeanUtils.copyProperties(songListEntity,songListVo);
-                songListVo.setSongNum(songDetailsService.countSongDetailsByList(list.get(i).getId()));
+                songListVo.setSongNum(songDetailsService.countSongDetailsByList(list.get(i).getLinkId()));
                 songListVos.add(songListVo);
             }
         }
         return songListVos;
+    }
+
+    @Override
+    public List<AlbumVo> getHistoryAlbumByUser(String userId, int type) {
+        List<HistoryListEntity> list = historyListDao.selectHistorysByUser(userId,type);
+        List<AlbumVo> albumEntityList = new ArrayList<>();
+        //专辑历史
+        if(type == ConstantUtil.albumType) {
+            for(int i=0;i<list.size();i++) {
+                AlbumEntity albumEntity = albumDao.selectById(list.get(i).getLinkId());
+                AlbumVo albumVo = new AlbumVo();
+                BeanUtils.copyProperties(albumEntity,albumVo);
+                albumVo.setSongNum(albumEntity.getSongs());
+                albumVo.setListName(albumEntity.getName());
+                albumEntityList.add(albumVo);
+            }
+        }
+        return albumEntityList;
     }
 }

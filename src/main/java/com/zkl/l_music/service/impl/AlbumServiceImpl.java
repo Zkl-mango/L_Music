@@ -16,6 +16,7 @@ import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.UUIDGenerator;
 import com.zkl.l_music.vo.AlbumDetailVo;
 import com.zkl.l_music.vo.PageInfoVo;
+import com.zkl.l_music.vo.SongListDetailVo;
 import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -119,8 +121,14 @@ public class AlbumServiceImpl implements AlbumService {
             }
         }
         List<SongVo> songVoList = songService.getSongsByAlbum(albumEntity.getId());
-        albumDetailVo.setSongVoList(songVoList);
-        List<AlbumEntity> list = albumDao.selectNewAlbums(id,albumEntity.getSingerId().getId());
+        List<SongListDetailVo> songListDetail = new ArrayList<>();
+        for(int i=0;i<songVoList.size();i++) {
+            SongListDetailVo songListDetailVo = new SongListDetailVo();
+            songListDetailVo.setSongVo(songVoList.get(i));
+            songListDetail.add(songListDetailVo);
+        }
+        albumDetailVo.setSongVoList(songListDetail);
+        List<AlbumEntity> list = albumDao.selectNewAlbumsBySinger(id,albumEntity.getSingerId().getId());
         albumDetailVo.setMoreAlbums(list);
         return albumDetailVo;
     }
@@ -162,7 +170,12 @@ public class AlbumServiceImpl implements AlbumService {
      * @return
      */
     @Override
-    public List<AlbumEntity> getNewAlbums(String id,String singerId) {
-        return albumDao.selectNewAlbums(id,singerId);
+    public List<AlbumEntity> getNewAlbumsBySinger(String id,String singerId) {
+        return albumDao.selectNewAlbumsBySinger(id,singerId);
+    }
+
+    @Override
+    public List<AlbumEntity> getNewAlbum() {
+        return albumDao.selectNewAlbum();
     }
 }

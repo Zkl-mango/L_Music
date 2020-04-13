@@ -20,7 +20,7 @@ public class SongListVo implements Serializable {
     private int playNum;            /*播放量*/
     private int category;           /*列表类型，1：自定义；2：我喜欢的*/
     private int songNum;            /*歌曲数量*/
-
+    private UserEntity userId;      /*所属用户*/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date time;              /*时间*/
 
@@ -104,6 +104,14 @@ public class SongListVo implements Serializable {
         this.time = time;
     }
 
+    public UserEntity getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UserEntity userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "SongListVo{" +
@@ -116,6 +124,7 @@ public class SongListVo implements Serializable {
                 ", playNum=" + playNum +
                 ", category=" + category +
                 ", songNum=" + songNum +
+                ", userId=" + userId +
                 ", time=" + time +
                 '}';
     }

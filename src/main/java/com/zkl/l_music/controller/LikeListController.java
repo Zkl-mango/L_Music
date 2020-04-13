@@ -8,6 +8,7 @@ import com.zkl.l_music.service.SongListService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.ReturnCode;
+import com.zkl.l_music.vo.AlbumVo;
 import com.zkl.l_music.vo.SongListDetailVo;
 import com.zkl.l_music.vo.SongListVo;
 import org.apache.commons.lang3.StringUtils;
@@ -49,8 +50,16 @@ public class  LikeListController {
         if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
         }
-        List<SongListVo> list = likeListService.getLikeListByUser(userId,type);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+        Map res = new HashMap();
+        if(type == 3) {
+            List<SongListVo> list = likeListService.getLikeListByUser(userId,type);
+            res.put("list",list);
+        }
+        if(type ==2) {
+            List<AlbumVo> albumList = likeListService.getLikeListAlbumByUser(userId,type);
+            res.put("list",albumList);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
     @GetMapping(value = "/all")
@@ -63,13 +72,14 @@ public class  LikeListController {
         List<SongListVo> songList = songListService.getSongListByUser(userId,2);
         List<SongListDetailVo> likeSongList = songDetailsService.getSongDetailsByList(songList.get(0).getId());
         //喜欢的专辑
-        List<AlbumEntity> albumList = likeListService.getLikeListAlbumByUser(userId, ConstantUtil.albumType);
+        List<AlbumVo> albumList = likeListService.getLikeListAlbumByUser(userId, ConstantUtil.albumType);
         //喜欢的歌单
         List<SongListVo> songlist = likeListService.getLikeListByUser(userId,ConstantUtil.listType);
         Map<Object,Object> res = new HashMap<>();
         res.put("likeSong",likeSongList);
         res.put("albumList",albumList);
         res.put("songList",songlist);
+        res.put("likeSongId",songList.get(0).getId());
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 }

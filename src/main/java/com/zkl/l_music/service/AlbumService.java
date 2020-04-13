@@ -29,5 +29,10 @@ public interface AlbumService {
      * 查找最新的3个专辑，除了本专辑以外
      * @return
      */
-    List<AlbumEntity> getNewAlbums(String id,String singerId);
+    List<AlbumEntity> getNewAlbumsBySinger(String id,String singerId);
+    /**
+     * 查找全部最新的3个专辑
+     * @return
+     */
+    List<AlbumEntity> getNewAlbum();
 }

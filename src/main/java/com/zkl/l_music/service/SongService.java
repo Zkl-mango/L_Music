@@ -3,6 +3,7 @@ package com.zkl.l_music.service;
 import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.SongEntity;
 import com.zkl.l_music.vo.PageInfoVo;
+import com.zkl.l_music.vo.SongListDetailVo;
 import com.zkl.l_music.vo.SongVo;
 
 import java.util.List;
@@ -37,4 +38,10 @@ public interface SongService {
      * @return
      */
     PageInfoVo getSongsBySinger(PageBo pageBo,String SingerId);
+
+    SongVo songChangeVo(SongEntity songEntity);
+
+    List<SongListDetailVo> getSongsByHot();
+
+    List<SongVo> getSongsByRecomment();
 }

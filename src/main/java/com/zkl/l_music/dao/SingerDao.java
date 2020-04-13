@@ -18,7 +18,7 @@ public interface SingerDao extends BaseMapper<SingerEntity> {
      * @param sex
      * @return
      */
-    List<SingerEntity> selectSingerList(String sex,int category);
+    IPage<SingerEntity> selectSingerList(Page page,String sex,int category);
 
     List<SingerEntity> selectSingerByCat(int category);
 

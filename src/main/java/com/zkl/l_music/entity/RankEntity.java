@@ -17,6 +17,9 @@ public class RankEntity implements Serializable {
     private String id;
     private String rankName;    /*榜单名称*/
     private int playNum;        /*榜单播放量*/
+    private String picture;
+    private int recomment;      /*是否推荐*/
+    private int type;
 
     public String getId() {
         return id;
@@ -42,12 +45,39 @@ public class RankEntity implements Serializable {
         this.playNum = playNum;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public int getRecomment() {
+        return recomment;
+    }
+
+    public void setRecomment(int recomment) {
+        this.recomment = recomment;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "RankEntity{" +
                 "id='" + id + '\'' +
                 ", rankName='" + rankName + '\'' +
                 ", playNum=" + playNum +
+                ", picture='" + picture + '\'' +
+                ", recomment=" + recomment +
+                ", type=" + type +
                 '}';
     }
 }

@@ -19,7 +19,7 @@ public interface SingerService {
 
     SingerDetailVo getSingerById(String id,PageBo pageBo,int type);
 
-    List<SingerListVo> getSingers(String sex,int category,String userId);
+    List<SingerListVo> getSingers(PageBo pageBo,String sex,int category,String userId);
 
     List<SingerEntity> getSingerByCategory(int category);
 }

@@ -15,6 +15,11 @@
                      select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
+    <insert id="insert">
+        insert into song_details(id,create_at,deleted,song_list,song_id)
+        values(#{id},#{createAt},#{deleted},#{songList.id},#{songId.id});
+    </insert>
+
     <delete id="deleteSongDetailsByListId" parameterType="String">
         DELETE FROM song_details WHERE song_list = #{songList};
     </delete>
@@ -27,6 +32,11 @@
     <select id="countSongsByList" resultType="int">
         SELECT count(id) FROM song_details
         WHERE song_list = #{songList} AND deleted=0;
+    </select>
+
+    <select id="selectSongDetailsBySongAndList" resultMap="songDetailsMap">
+        SELECT id,create_at,deleted,song_list,song_id FROM song_details
+        WHERE song_list = #{songList} AND deleted=0 And song_id = #{songId};
     </select>
 
 </mapper>
