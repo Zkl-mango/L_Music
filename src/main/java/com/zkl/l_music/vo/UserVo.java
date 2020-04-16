@@ -1,11 +1,14 @@
 package com.zkl.l_music.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zkl.l_music.dto.FollowsDto;
 import com.zkl.l_music.util.ConstantUtil;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserVo {
+@JsonIgnoreProperties(value = {"handler"})
+public class UserVo implements Serializable {
 
     private String id;
 

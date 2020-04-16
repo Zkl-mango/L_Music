@@ -1,6 +1,7 @@
 package com.zkl.l_music.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.util.ConstantUtil;
 import lombok.Data;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+@JsonIgnoreProperties(value = {"handler"})
 public class SongListVo implements Serializable {
 
     private String id;

@@ -14,6 +14,7 @@ import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.CommentsLikeService;
 import com.zkl.l_music.service.CommentsService;
+import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.PageUtils;
 import com.zkl.l_music.util.RequestHolder;
 import com.zkl.l_music.util.UUIDGenerator;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.xml.stream.events.Comment;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -113,8 +115,7 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
-    public CommentsVo getCommentsBySong(PageBo pageBo,String songId) {
-        String userId = RequestHolder.getUserRequest();
+    public CommentsVo getCommentsBySong(PageBo pageBo,String songId,String userId) {
         //更新评论的点赞数
         List<CommentsEntity> commentsEntities = commentsLikeService.getLikedCountFromRedis();
         this.updateCommentsLikeRedis(commentsEntities);
@@ -126,7 +127,11 @@ public class CommentsServiceImpl implements CommentsService {
         //把热度最高的isHot字段修改
         for(int i=0;i<list.size();i++) {
             list.get(i).setIsHot(1);
+            UserEntity userEntity = list.get(i).getUserId();
+            list.get(i).setUserId(null);
+            list.get(i).setSongId(null);
             commentsDao.updateById(list.get(i));
+            list.get(i).setUserId(userEntity);
             CommentsDetailVo commentsDetailVo = commentsLikeService.getCommentByUser(userId,list.get(i));
             hotList.add(commentsDetailVo);
         }

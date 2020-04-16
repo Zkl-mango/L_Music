@@ -2,6 +2,7 @@ package com.zkl.l_music.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  */
 @Alias(value = "SongEntity")
 @TableName("song")
+@JsonIgnoreProperties(value = {"handler"})
 public class SongEntity implements Serializable {
 
     @TableId
@@ -25,7 +27,7 @@ public class SongEntity implements Serializable {
     private String lyric;           /*歌词*/
     private String klyric;          /*歌词*/
     private int likeNum;               /*点赞数*/
-    private int category;           /*歌曲类别*/
+    private String category;           /*歌曲类别*/
     private int hot;                /*歌曲热度*/
     private int recommend;          /*歌曲评论数*/
 
@@ -85,11 +87,11 @@ public class SongEntity implements Serializable {
         this.lyric = lyric;
     }
 
-    public int getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(int category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 

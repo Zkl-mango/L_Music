@@ -17,22 +17,32 @@
                      select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
+    <insert id="insert" >
+        insert into comments(id,comment,likes,time,is_hot,user_id,song_id)
+        values(#{id},#{comment},#{likes},#{time},#{isHot},#{userId.id},#{songId.id});
+    </insert>
+
     <update id="updateAll" >
         UPDATE comments SET is_hot=0 WHERE song_id=#{songId};
     </update>
 
+    <select id="selectById" resultMap="commentsMap">
+        SELECT id,comment,likes,time,is_hot,user_id,song_id FROM comments
+        WHERE id = #{id} ;
+    </select>
+
     <select id="selectCommentsByLike" resultMap="commentsMap">
-        SELECT top 3 id,comment,likes,time,is_hot,user_id,song_id FROM comments
-        WHERE song_id = #{songId} ORDER BY likes desc;
+        SELECT id,comment,likes,time,is_hot,user_id,song_id FROM comments
+        WHERE song_id = #{songId} ORDER BY likes desc LIMIT 3;
     </select>
 
     <select id="selectComments" resultMap="commentsMap">
         SELECT id,comment,likes,time,is_hot,user_id,song_id FROM comments
-        WHERE song_id = #{songId} AND is_hot=0 ORDER BY time desc;
+        WHERE song_id = #{songId} AND is_hot=0 ORDER BY time desc
     </select>
 
     <select id="selectCommentsByUser" resultMap="commentsMap">
         SELECT id,comment,likes,time,is_hot,user_id,song_id FROM comments
-        WHERE user_id = #{userId} ORDER BY time desc;
+        WHERE user_id = #{userId} ORDER BY time desc
     </select>
 </mapper>

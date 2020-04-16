@@ -1,5 +1,6 @@
 package com.zkl.l_music.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
@@ -8,7 +9,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 @Slf4j
-public class ApiResponse <T> implements Serializable {
+public class ApiResponse<T> implements Serializable {
 
     /**响应编码：0成功；-1系统异常；*/
     private int code;
@@ -70,11 +71,11 @@ public class ApiResponse <T> implements Serializable {
      * @param res
      */
     public static ApiResponse fail(Map<String, Object> res) {
-        return fail(ReturnCode.FAIL.getCode(), ReturnCode.FAIL.getMsg());
+        return fail(ReturnCode.FAIL.getCode(), ReturnCode.FAIL.getMsg(),res);
     }
 
     public static ApiResponse fail(String msg) {
-        return fail(ReturnCode.FAIL.getCode(), msg);
+        return fail(ReturnCode.FAIL.getCode(), msg,null);
     }
 
     /**
@@ -83,7 +84,7 @@ public class ApiResponse <T> implements Serializable {
      * @return
      */
     public static ApiResponse fail(ReturnCode responseCode) {
-        return fail(responseCode.getCode(), responseCode.getMsg());
+        return fail(responseCode.getCode(), responseCode.getMsg(),null);
     }
 
     /**
@@ -92,10 +93,11 @@ public class ApiResponse <T> implements Serializable {
      * @param msg
      * @return
      */
-    public static ApiResponse fail(int failCode, String msg) {
+    public static ApiResponse fail(int failCode, String msg,Map data) {
         ApiResponse response = new ApiResponse();
         response.setCode(failCode);
         response.setMessage(msg);
+        response.setData(data);
         log.info("响应失败，返回报文为{}", response.toString());
         //设置响应头
         HttpServletResponse currentResponse = RequestHolder.getCurrentResponse();

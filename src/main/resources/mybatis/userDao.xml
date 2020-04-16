@@ -12,6 +12,15 @@
         <result column="follow" property="follow" />
     </resultMap>
 
+    <select id="countUser" resultType="int">
+        SELECT count(*) FROM user;
+    </select>
+
+    <select id="selectAllUser" resultMap="userMap">
+        SELECT id,name,phone,password,avatar,follow FROM user
+        WHERE id != '1';
+    </select>
+
     <select id="selectUserByPhone" resultMap="userMap">
         SELECT id,name,phone,password,avatar,follow FROM user
         WHERE phone = #{phone};

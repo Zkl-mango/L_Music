@@ -1,12 +1,14 @@
 package com.zkl.l_music.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zkl.l_music.entity.SingerEntity;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@JsonIgnoreProperties(value = {"handler"})
 public class AlbumVo {
 
     private String id;

@@ -5,11 +5,13 @@ import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.CommentsLikeService;
 import com.zkl.l_music.service.CommentsService;
+import com.zkl.l_music.service.SongService;
 import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.RequestHolder;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.CommentsVo;
+import com.zkl.l_music.vo.SongVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -30,6 +34,8 @@ public class CommentsController {
     CommentsService commentsService;
     @Resource
     CommentsLikeService commentsLikeService;
+    @Resource
+    SongService songService;
 
     /**
      * 添加评论
@@ -100,9 +106,15 @@ public class CommentsController {
      * @return
      */
     @GetMapping(value = "/{songId}")
-    public ResponseEntity getComments(@PathVariable String songId, @RequestBody @Valid PageBo pageBo) {
-        CommentsVo commentsVo = commentsService.getCommentsBySong(pageBo,songId);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(commentsVo));
+    public ResponseEntity getComments(HttpServletRequest request,@PathVariable String songId, @Valid PageBo pageBo) {
+        Map<String,Object> res = new HashMap<>();
+        String userId = request.getHeader("userId");
+        if(StringUtils.isBlank(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
+        }
+        CommentsVo commentsVo = commentsService.getCommentsBySong(pageBo,songId,userId);
+        res.put("commentsVo",commentsVo);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
     }
 
 

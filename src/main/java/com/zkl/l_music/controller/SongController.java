@@ -4,13 +4,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.data.DataUrlConstant;
+import com.zkl.l_music.entity.SongDetailsEntity;
+import com.zkl.l_music.entity.SongListEntity;
+import com.zkl.l_music.service.SongDetailsService;
+import com.zkl.l_music.service.SongListService;
 import com.zkl.l_music.service.SongService;
 import com.zkl.l_music.util.ApiResponse;
+import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.ReturnCode;
-import com.zkl.l_music.vo.PageInfoVo;
-import com.zkl.l_music.vo.SingerListVo;
-import com.zkl.l_music.vo.SongListDetailVo;
-import com.zkl.l_music.vo.SongVo;
+import com.zkl.l_music.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +36,10 @@ public class SongController {
 
     @Resource
     SongService songService;
+    @Resource
+    SongListService songListService;
+    @Resource
+    SongDetailsService songDetailsService;
 
     /**
      * 更新歌曲热度/播放量
@@ -100,12 +107,27 @@ public class SongController {
     }
 
     /**
-     * 查看歌曲是否可用并获取url
+     * 查看歌曲是否可用并获取url,和是否收藏
      * @param id
      * @return
      */
     @GetMapping("/check/{id}")
-    public ResponseEntity songCheck(@PathVariable String id) {
+    public ResponseEntity songCheck(HttpServletRequest request, @PathVariable String id) {
+        Map res = new HashMap();
+        String userId = request.getHeader("userId");
+        if(userId.equals("undefined")) {
+            userId = null;
+            res.put("like",false);
+        } else {
+            //查看该歌曲是否收藏
+            List<SongListVo> likeEntity = songListService.getSongListByUser(userId, 2);
+            SongDetailsEntity songDetailsEntity = songDetailsService.getSongDetailsBySongAndList(likeEntity.get(0).getId(),id);
+            if(songDetailsEntity == null) {
+                res.put("like",false);
+            } else {
+                res.put("like",true);
+            }
+        }
         RestTemplate restTemplate=new RestTemplate();
         ResponseEntity<String> responseEntity;
         Boolean type ;
@@ -121,7 +143,6 @@ public class SongController {
             type = false;
             message = "亲爱的,暂无版权";
         }
-        System.out.println(DataUrlConstant.url+"/check/music?id="+id+" "+type+" "+message);
         if(type) {
             ResponseEntity<String> response_url=restTemplate.getForEntity
                     (DataUrlConstant.url+"/song/url?id="+id,String.class);
@@ -129,10 +150,13 @@ public class SongController {
             JSONArray urlArray = json_url.getJSONArray("data");
             String url = urlArray.getJSONObject(0).getString("url");
             if(StringUtils.isBlank(url)) {
-                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail("亲爱的,暂无版权"));
+                res.put("message","亲爱的,暂无版权");
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail(res));
             }
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(url));
+            res.put("url",url);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail(message));
+        res.put("message",message);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail(res));
     }
 }

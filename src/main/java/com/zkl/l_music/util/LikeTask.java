@@ -23,10 +23,10 @@ public class LikeTask extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("LikeTask-------- {}", sdf.format(new Date()));
+        log.info("LikeTask---start----- {}", sdf.format(new Date()));
 
         //将 Redis 里的点赞信息同步到数据库里
-//        commentsLikeService.getLikedsFromRedisToDB();
-
+        commentsLikeService.getLikedsFromRedisToDB();
+        log.info("LikeTask---end----- {}", sdf.format(new Date()));
     }
 }

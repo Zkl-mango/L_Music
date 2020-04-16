@@ -24,4 +24,6 @@ public interface SingerDao extends BaseMapper<SingerEntity> {
 
     List<SingerEntity> selectHotTop(String sex,int category);
 
+    List<SingerEntity> selectSingerName(String singer);
+
 }

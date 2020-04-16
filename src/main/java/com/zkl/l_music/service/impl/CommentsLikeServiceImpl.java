@@ -7,7 +7,9 @@ import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.entity.CommentsEntity;
 import com.zkl.l_music.entity.CommentsLikeEntity;
 import com.zkl.l_music.entity.SingerEntity;
+import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.CommentsLikeService;
+import com.zkl.l_music.util.ConstantUtil;
 import com.zkl.l_music.util.LikedStatusEnum;
 import com.zkl.l_music.util.RedisKeyUtils;
 import com.zkl.l_music.util.UUIDGenerator;
@@ -145,15 +147,35 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
 
     @Override
     public CommentsDetailVo getCommentByUser(String userId, CommentsEntity commentsEntity) {
+        CommentsDetailVo commentsDetailVo = new CommentsDetailVo();
+        BeanUtils.copyProperties(commentsEntity,commentsDetailVo);
+        UserEntity userEntity = commentsDetailVo.getUserId();
+        userEntity.setAvatar(ConstantUtil.avatardownloadPath+userEntity.getAvatar());
+        commentsDetailVo.setUserId(userEntity);
         CommentsLikeEntity commentsLike = commentsLikeDao.selectCommentsLike(userId,commentsEntity.getId());
         if(commentsLike==null) {
-            return null;
+            return commentsDetailVo;
         }
         if(commentsLike.getStatus()==0) {
-            return null;
+            return commentsDetailVo;
         }
-        CommentsDetailVo commentsDetailVo = new CommentsDetailVo();
-        BeanUtils.copyProperties(commentsDetailVo,commentsEntity);
+        //从redis获取点赞列表
+        Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(RedisKeyUtils.MAP_KEY_COMMENT_LIKED, ScanOptions.NONE);
+        while (cursor.hasNext()) {
+            Map.Entry<Object, Object> entry = cursor.next();
+            String key = (String) entry.getKey();
+            //分离出 likedUserId，likedPostId
+            String[] split = key.split("::");
+            String likedUserId = split[0];
+            String commentId = split[1];
+            Integer value = (Integer) entry.getValue();
+            if(likedUserId.equals(userId) && value == 1 && commentId.equals(commentsEntity.getId())) {
+                commentsDetailVo.setIsUser(1);
+            }
+            else {
+                 return commentsDetailVo;
+            }
+        }
         //判断评论是否被用户点赞过
         commentsDetailVo.setIsUser(1);
         return commentsDetailVo;

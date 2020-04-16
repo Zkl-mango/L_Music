@@ -3,9 +3,7 @@ package com.zkl.l_music.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.entity.SingerEntity;
-import com.zkl.l_music.vo.PageInfoVo;
-import com.zkl.l_music.vo.SingerDetailVo;
-import com.zkl.l_music.vo.SingerListVo;
+import com.zkl.l_music.vo.*;
 
 import java.util.List;
 
@@ -22,4 +20,8 @@ public interface SingerService {
     List<SingerListVo> getSingers(PageBo pageBo,String sex,int category,String userId);
 
     List<SingerEntity> getSingerByCategory(int category);
+
+    List<SongListDetailVo> getSingerSongs(String id,PageBo pageBo);
+
+    List<SingerVo> getSingersByName(String name,String userId);
 }

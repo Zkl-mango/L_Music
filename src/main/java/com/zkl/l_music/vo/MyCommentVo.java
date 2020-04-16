@@ -1,12 +1,13 @@
 package com.zkl.l_music.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
-
+@JsonIgnoreProperties(value = {"handler"})
 public class MyCommentVo implements Serializable {
 
     private String id;

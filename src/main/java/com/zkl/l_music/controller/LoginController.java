@@ -1,10 +1,13 @@
 package com.zkl.l_music.controller;
 
 import com.zkl.l_music.bo.LoginBo;
+import com.zkl.l_music.entity.AuthEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.AuthService;
+import com.zkl.l_music.service.PlayListService;
 import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.ApiResponse;
+import com.zkl.l_music.vo.SongListDetailVo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -23,6 +27,8 @@ public class LoginController {
     UserService userService;
     @Resource
     AuthService authService;
+    @Resource
+    PlayListService playListService;
 
     /**
      * 用于确认服务器状态的接口 check_network
@@ -43,7 +49,8 @@ public class LoginController {
     @ResponseBody
     public ResponseEntity comfirmAuth(HttpServletRequest request,String token,String userId){
         if(authService.veriflyToken(userId,token)){
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("ok"));
+            List<SongListDetailVo> list = playListService.getPlayListByUser(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
         }else{
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.success("登录信息发生了变化，请重新登录"));
         }
@@ -59,6 +66,9 @@ public class LoginController {
     public ResponseEntity login(HttpServletRequest request, @RequestBody @Valid LoginBo loginBo) {
         Map<String,Object> res = userService.judgeLogin(request,loginBo);
         if(res.get("message").equals("登录成功")) {
+            AuthEntity authEntity = (AuthEntity)res.get("auth");
+            List<SongListDetailVo> list = playListService.getPlayListByUser(authEntity.getUser().getId());
+            res.put("playList",list);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(res));

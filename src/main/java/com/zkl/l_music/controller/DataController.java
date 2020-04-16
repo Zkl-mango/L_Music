@@ -62,7 +62,7 @@ public class DataController {
     public ResponseEntity getSongFromApi(@PathVariable int cat) {
         List<SingerEntity>singerList = singerService.getSingerByCategory(cat);
 //        singerList = singerList.subList(1652,singerList.size());
-        for(int j=244;j<singerList.size();j++) {
+        for(int j=0;j<singerList.size();j++) {
             List<AlbumEntity> list =  albumService.getAllAlbumsBySinger(singerList.get(j).getId());
             int length = 101;
             if(list.size() < 101) {

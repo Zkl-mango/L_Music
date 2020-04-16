@@ -146,9 +146,8 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<SongVo> getSongsByRecomment() {
+    public List<SongEntity> getSongsByRecomment() {
         List<SongEntity> list = songDao.selectSongsByRecomment();
-        List<SongVo> songDetails = this.songDetails(list);
-        return songDetails;
+        return list;
     }
 }

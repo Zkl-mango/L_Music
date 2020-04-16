@@ -121,4 +121,9 @@ public class SongDetailsServiceImpl implements SongDetailsService {
     public int countSongDetailsByList(String listId) {
         return songDetailsDao.countSongsByList(listId);
     }
+
+    @Override
+    public SongDetailsEntity getSongDetailsBySongAndList(String listId, String songId) {
+        return songDetailsDao.selectSongDetailsBySongAndList(listId,songId);
+    }
 }

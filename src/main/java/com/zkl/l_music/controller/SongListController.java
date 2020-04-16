@@ -2,6 +2,7 @@ package com.zkl.l_music.controller;
 
 import com.zkl.l_music.bo.PageBo;
 import com.zkl.l_music.bo.SongDetailBo;
+import com.zkl.l_music.entity.SongDetailsEntity;
 import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.entity.UserEntity;
 import com.zkl.l_music.service.*;
@@ -39,6 +40,8 @@ public class SongListController {
     SongService songService;
     @Resource
     HistoryListService historyListService;
+    @Resource
+    RecommentService recommentService;
     /**
      * 创建歌单
      * @param request
@@ -165,6 +168,11 @@ public class SongListController {
             res.put("songs",historyListVos);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
         }
+        if(id.equals("recomment")) {
+            List<SongListDetailVo> list = recommentService.getRecommentsSong(userId);
+            res.put("songs",list);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
+        }
         SongListVo songListVo = songListService.getSongListById(id,userId);
         List<SongListDetailVo> songListDetail = songDetailsService.getSongDetailsByList(id);
         res.put("detail",songListVo);
@@ -218,4 +226,36 @@ public class SongListController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
     }
 
+    /**
+     * 收藏/取消收藏歌曲
+     * @param request
+     * @param songDetailBo
+     * @return
+     */
+    @PostMapping(value = "/like/{type}")
+    public ResponseEntity addSongDetails(HttpServletRequest request,@RequestBody @Valid SongDetailBo songDetailBo,
+                                         @PathVariable int type) {
+        String userId = request.getHeader("userId");
+        if(userId.equals("undefined")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
+        }
+        List<SongListVo> songListEntities = songListService.getSongListByUser(userId,2);
+        //收藏
+        if(type == 1) {
+            songDetailBo.setSongList(songListEntities.get(0).getId());
+            boolean res = songDetailsService.addSongDetails(songDetailBo);
+            if(res) {
+                return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("收藏成功"));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
+        }
+        //取消收藏
+        SongDetailsEntity songDetailsEntity = songDetailsService.getSongDetailsBySongAndList(
+                songListEntities.get(0).getId(),songDetailBo.getSongId());
+        boolean res = songDetailsService.updateSongDetails(songDetailsEntity.getId());
+        if(res) {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("取消收藏成功"));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(ReturnCode.FAIL));
+    }
 }

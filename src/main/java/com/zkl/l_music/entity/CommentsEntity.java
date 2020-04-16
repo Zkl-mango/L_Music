@@ -4,6 +4,7 @@ package com.zkl.l_music.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Date;
 
 @Alias(value = "CommentsEntity")
 @TableName("comments")
+@JsonIgnoreProperties(value = {"handler"})
 public class CommentsEntity implements Serializable {
 
     @TableId
@@ -25,7 +27,7 @@ public class CommentsEntity implements Serializable {
     private UserEntity userId;
     private SongEntity songId;
     private int likes;          /*点赞数*/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
     private Date time;          /*评论时间*/
     private int isHot;          /*是否为热度展示,0否，1是*/
 

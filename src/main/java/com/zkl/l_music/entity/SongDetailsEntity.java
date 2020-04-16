@@ -3,6 +3,7 @@ package com.zkl.l_music.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Date;
  */
 @Alias(value = "SongDetailsEntity")
 @TableName("song_details")
+@JsonIgnoreProperties(value = {"handler"})
 public class SongDetailsEntity implements Serializable {
 
     @TableId

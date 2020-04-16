@@ -7,6 +7,7 @@ import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SingerDetailVo;
 import com.zkl.l_music.vo.SingerListVo;
+import com.zkl.l_music.vo.SongListDetailVo;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,12 @@ public class SingerController {
     public ResponseEntity getSingerById(@PathVariable String id, PageBo pageBo,int type) {
         SingerDetailVo singerDetailVo = singerService.getSingerById(id,pageBo,type);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(singerDetailVo));
+    }
+
+    @GetMapping(value = "/song/{id}")
+    public ResponseEntity getSingerSong(@PathVariable String id, PageBo pageBo) {
+        List<SongListDetailVo> list = singerService.getSingerSongs(id,pageBo);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
     }
 
 }

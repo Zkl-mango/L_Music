@@ -2,6 +2,7 @@ package com.zkl.l_music.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.Date;
 
 @Alias(value = "AuthEntity")
 @TableName("auth")
+@JsonIgnoreProperties(value = {"handler"})
 public class AuthEntity implements Serializable {
 
     @TableId

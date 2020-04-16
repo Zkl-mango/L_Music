@@ -22,7 +22,7 @@ public interface CommentsService {
 
     CommentsEntity getCommentById(String id);
 
-    CommentsVo getCommentsBySong(PageBo page, String songId);
+    CommentsVo getCommentsBySong(PageBo page, String songId,String userId);
 
     List<MyCommentVo> getCommentsByUser(String userId);
 }

@@ -5,6 +5,7 @@ import com.zkl.l_music.service.PlayListService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.PlayListVo;
+import com.zkl.l_music.vo.SongListDetailVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -68,4 +70,16 @@ public class PlayListController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.fail("系统异常"));
     }
+
+    //获取播放列表
+    @GetMapping(value = "")
+    public ResponseEntity getPlayList(HttpServletRequest request) {
+        String  userId = request.getHeader("userId");
+        if(StringUtils.isBlank(userId)|| userId.equals("undefined")) {
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
+        }
+        List<SongListDetailVo> list = playListService.getPlayListByUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+    }
+
 }

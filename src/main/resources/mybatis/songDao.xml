@@ -43,7 +43,7 @@
 
     <select id="selectSongsByRecomment" resultMap="songMap" >
         SELECT id,name,singer_id,album_id,link,picture,lyric,klyric,like_num,category,hot,recommend
-        FROM song WHERE recommend = 1
-        ORDER BY hot desc
+        FROM song
+        ORDER BY like_num desc LIMIT 10
     </select>
 </mapper>

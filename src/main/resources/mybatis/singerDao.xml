@@ -42,4 +42,11 @@
         <if test="category!=0">AND category LIKE '${category}%'</if>
         ORDER by fans desc LIMIT 20 ;
     </select>
+
+    <select id="selectSingerName" resultMap="singerMap">
+        SELECT id,singer,english_name,sex,picture,fans,songs,albums,category,about
+        FROM singer WHERE
+         singer LIKE '%${singer}%'
+        ORDER by fans desc ;
+    </select>
 </mapper>

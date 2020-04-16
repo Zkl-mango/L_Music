@@ -1,9 +1,13 @@
 package com.zkl.l_music.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class PlayListVo {
+@JsonIgnoreProperties(value = {"handler"})
+public class PlayListVo implements Serializable {
 
     private String id;
     private String userId;

@@ -43,5 +43,5 @@ public interface SongService {
 
     List<SongListDetailVo> getSongsByHot();
 
-    List<SongVo> getSongsByRecomment();
+    List<SongEntity> getSongsByRecomment();
 }

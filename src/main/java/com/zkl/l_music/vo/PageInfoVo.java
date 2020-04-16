@@ -1,5 +1,6 @@
 package com.zkl.l_music.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Data
 @Builder
+@JsonIgnoreProperties(value = {"handler"})
 public class PageInfoVo<T> implements Serializable {
     /**
      * 当前页码

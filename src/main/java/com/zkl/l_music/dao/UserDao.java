@@ -6,8 +6,14 @@ import org.apache.catalina.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface UserDao extends BaseMapper<UserEntity> {
+
+    int countUser();
+
+    List<UserEntity> selectAllUser();
 
     UserEntity selectUserByPhone(String phone);
 

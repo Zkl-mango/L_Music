@@ -18,6 +18,7 @@ import com.zkl.l_music.util.SortByChinese;
 import com.zkl.l_music.vo.*;
 import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -110,7 +111,14 @@ public class SingerServiceImpl implements SingerService {
         //获取歌手相关的歌曲
         PageInfoVo pageInfoVo = songService.getSongsBySinger(pageBo,singerEntity.getId());
         List<SongVo> songList = pageInfoVo.getList();
-        singerDetailVo.setSongList(songList);
+        List<SongListDetailVo> songListDetailVos = new ArrayList<>();
+        for(int j=0;j<songList.size();j++) {
+            SongVo songVo = songList.get(j);
+            SongListDetailVo songListDetailVo = new SongListDetailVo();
+            songListDetailVo.setSongVo(songVo);
+            songListDetailVos.add(songListDetailVo);
+        }
+        singerDetailVo.setSongList(songListDetailVos);
         return singerDetailVo;
     }
 
@@ -145,17 +153,50 @@ public class SingerServiceImpl implements SingerService {
         return singerListVos;
     }
 
-//    @Override
-//    public PageInfoVo getSingersBySex(PageBo pageBo, String sex) {
-//        Page page = new Page();
-//        page.setSize(pageBo.getSize());
-//        page.setCurrent(pageBo.getSize());
-//        IPage iPage = singerDao.selectSingerList(page,sex);
-//        return PageUtils.generatePageVo(iPage);
-//    }
-//
     @Override
     public List<SingerEntity> getSingerByCategory(int category) {
         return singerDao.selectSingerByCat(category);
+    }
+
+    @Override
+    public List<SongListDetailVo> getSingerSongs(String id, PageBo pageBo) {
+        List<SongListDetailVo> songListDetailVos = new ArrayList<>();
+        int page = pageBo.getPage();
+        for(int i=1;i<=page;i++) {
+            pageBo.setPage(i);
+            PageInfoVo pageInfoVo = songService.getSongsBySinger(pageBo,id);
+            List<SongVo> songList = pageInfoVo.getList();
+            for(int j=0;j<songList.size();j++) {
+                SongVo songVo = songList.get(j);
+                SongListDetailVo songListDetailVo = new SongListDetailVo();
+                songListDetailVo.setSongVo(songVo);
+                songListDetailVos.add(songListDetailVo);
+            }
+        }
+        return songListDetailVos;
+    }
+
+    @Override
+    public List<SingerVo> getSingersByName(String name,String userId) {
+        List<SingerEntity> list = singerDao.selectSingerName(name);
+        List<SingerVo> singerVos = new ArrayList<>();
+        UserEntity user;
+        if(StringUtils.isBlank(userId)) {
+            user = null;
+        } else {
+            user = userDao.selectById(userId);
+        }
+        for (SingerEntity singerEntity : list) {
+            SingerVo singerVo = new SingerVo();
+            BeanUtils.copyProperties(singerEntity,singerVo);
+            singerVo.setFollow("+ 关注");
+            if(user != null) {
+                if(SortByChinese.isFollow(user,singerEntity.getId())) {
+                    singerVo.setFollow("已关注");
+                }
+            }
+            singerVos.add(singerVo);
+        }
+        return singerVos;
     }
 }

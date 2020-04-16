@@ -2,6 +2,7 @@ package com.zkl.l_music.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
@@ -12,13 +13,15 @@ import java.io.Serializable;
  */
 @Alias(value = "RecommentEntity")
 @TableName("recomment")
+@JsonIgnoreProperties(value = {"handler"})
 public class RecommentEntity implements Serializable {
 
     @TableId
     private String id;
-    private UserEntity userEntity;
-    private SongEntity songEntity;
-    private int type;               /*今日是否推荐，1：是，0：否*/
+    private UserEntity userId;
+    private String linkId;
+    private double type;               /*相关度*/
+    private int linkType;               /*1 歌曲，3 歌单*/
 
     public String getId() {
         return id;
@@ -28,37 +31,46 @@ public class RecommentEntity implements Serializable {
         this.id = id;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public UserEntity getUserId() {
+        return userId;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUserId(UserEntity userId) {
+        this.userId = userId;
     }
 
-    public SongEntity getSongEntity() {
-        return songEntity;
+    public String getLinkId() {
+        return linkId;
     }
 
-    public void setSongEntity(SongEntity songEntity) {
-        this.songEntity = songEntity;
+    public void setLinkId(String linkId) {
+        this.linkId = linkId;
     }
 
-    public int getType() {
+    public double getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(double type) {
         this.type = type;
+    }
+
+    public int getLinkType() {
+        return linkType;
+    }
+
+    public void setLinkType(int linkType) {
+        this.linkType = linkType;
     }
 
     @Override
     public String toString() {
         return "RecommentEntity{" +
                 "id='" + id + '\'' +
-                ", userEntity=" + userEntity +
-                ", songEntity=" + songEntity +
+                ", userId=" + userId +
+                ", linkId='" + linkId + '\'' +
                 ", type=" + type +
+                ", linkType=" + linkType +
                 '}';
     }
 }
