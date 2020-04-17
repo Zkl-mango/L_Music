@@ -41,6 +41,18 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
+    public boolean addRankList(RankListEntity rankListEntity) {
+        if(rankListEntity == null) {
+            return false;
+        }
+        int res = rankListDao.insert(rankListEntity);
+        if(res == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean updateRank(String id) {
         RankEntity rankEntity = rankDao.selectById(id);
         if(rankEntity == null) {
@@ -85,6 +97,11 @@ public class RankServiceImpl implements RankService {
     @Override
     public RankEntity getRankById(String id) {
         return rankDao.selectById(id);
+    }
+
+    @Override
+    public List<RankEntity> getAllRank() {
+        return rankDao.selectAllRank();
     }
 
     @Override

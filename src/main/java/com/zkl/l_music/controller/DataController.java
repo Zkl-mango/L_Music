@@ -2,9 +2,13 @@ package com.zkl.l_music.controller;
 
 import com.zkl.l_music.data.*;
 import com.zkl.l_music.entity.AlbumEntity;
+import com.zkl.l_music.entity.RankEntity;
 import com.zkl.l_music.entity.SingerEntity;
+import com.zkl.l_music.entity.SmallTagEntity;
 import com.zkl.l_music.service.AlbumService;
+import com.zkl.l_music.service.RankService;
 import com.zkl.l_music.service.SingerService;
+import com.zkl.l_music.service.TagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +39,12 @@ public class DataController {
     TagData tagData;
     @Resource
     RankData rankData;
+    @Resource
+    RankService rankService;
+    @Resource
+    TagService tagService;
+    @Resource
+    SongListData songListData;
 
     //添加歌手信息
     @RequestMapping("/singer/{cat}")
@@ -62,10 +72,10 @@ public class DataController {
     public ResponseEntity getSongFromApi(@PathVariable int cat) {
         List<SingerEntity>singerList = singerService.getSingerByCategory(cat);
 //        singerList = singerList.subList(1652,singerList.size());
-        for(int j=0;j<singerList.size();j++) {
+        for(int j=0;j<400;j++) {
             List<AlbumEntity> list =  albumService.getAllAlbumsBySinger(singerList.get(j).getId());
-            int length = 101;
-            if(list.size() < 101) {
+            int length = 51;
+            if(list.size() < 51) {
                 length = list.size();
             }
             for(int i=0;i<length;i++) {
@@ -91,6 +101,26 @@ public class DataController {
     @RequestMapping("/rank")
     public ResponseEntity getRankFromApi() {
         rankData.getRankData();
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @RequestMapping("/rankDetail")
+    public ResponseEntity getRankDetailFromApi() throws ParseException {
+        List<RankEntity> ranks = rankService.getAllRank();
+        for(int i=0;i<ranks.size();i++) {
+            rankData.getRankDataDetails(ranks.get(i).getId());
+            System.out.println("rank"+i);
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @RequestMapping("/songList")
+    public ResponseEntity getSongListFromApi() throws Exception {
+        List<SmallTagEntity> tags = tagService.getSmallTagByCat(0);
+        for(int i=2;i<tags.size();i++) {
+            songListData.getSongListData(tags.get(i).getName());
+            System.out.println("tags"+tags.get(i).getName());
+        }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

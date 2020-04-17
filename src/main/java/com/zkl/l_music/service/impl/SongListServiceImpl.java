@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,8 +54,9 @@ public class SongListServiceImpl implements SongListService {
         songListEntity.setListName(songListName);
         songListEntity.setId(uuidGenerator.generateUUID());
         songListEntity.setUserId(userDao.selectById(id));
-        songListEntity.setPicture(ConstantUtil.listPic);
+        songListEntity.setPicture(ConstantUtil.listPicdownloadPath + ConstantUtil.listPic);
         songListEntity.setCategory(category);
+        songListEntity.setCreatTime(new Date());
         int res = songListDao.insert(songListEntity);
         if(res == 1) {
             return songListEntity.getId();
@@ -95,7 +97,7 @@ public class SongListServiceImpl implements SongListService {
             return false;
         }
         SongListEntity songList = new SongListEntity();
-        songList.setPicture(picture);
+        songList.setPicture(ConstantUtil.listPicdownloadPath + picture);
         songList.setId(songListEntity.getId());
         songList.setPlayNum(songListEntity.getPlayNum());
         songList.setLikeNum(songListEntity.getLikeNum());

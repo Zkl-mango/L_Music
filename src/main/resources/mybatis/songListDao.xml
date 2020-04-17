@@ -12,40 +12,41 @@
         <result column="tag" property="tag"/>
         <result column="playNum" property="play_num"/>
         <result column="picture" property="picture"/>
+        <result column="create_time" property="creatTime"/>
         <association property="userId" column="user_id"
                      javaType="com.zkl.l_music.entity.UserEntity"
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
     </resultMap>
 
     <insert id="insert">
-        insert into song_list(id,list_name,category,user_id,introduction,like_num,tag,play_num,picture)
-        values(#{id},#{listName},#{category},#{userId.id},#{introduction},#{likeNum},#{tag},#{playNum},#{picture});
+        insert into song_list(id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time)
+        values(#{id},#{listName},#{category},#{userId.id},#{introduction},#{likeNum},#{tag},#{playNum},#{picture},#{creatTime});
     </insert>
 
     <select id="selectById" resultMap="songListMap">
-        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time FROM song_list
         WHERE id = #{id};
     </select>
 
     <select id="selectSongListByUser" resultMap="songListMap">
-        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time FROM song_list
         WHERE user_id = #{userId} and category=#{category};
     </select>
 
     <select id="selectPlaySongList" resultMap="songListMap">
-        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time FROM song_list
         WHERE category = 1
         ORDER BY play_num desc LIMIT 6;
     </select>
 
     <select id="selectLikeSongList" resultMap="songListMap">
-        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time FROM song_list
         WHERE category = 1
         ORDER BY like_num desc LIMIT 7;
     </select>
 
     <select id="selectSongListByTag" resultMap="songListMap">
-        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture FROM song_list
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time FROM song_list
         WHERE category = 1
         <if test="tag!=null">and tag LIKE '%${tag}%' </if>
         ORDER BY like_num desc

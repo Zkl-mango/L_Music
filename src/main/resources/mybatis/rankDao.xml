@@ -22,4 +22,9 @@
         FROM rank WHERE recomment = #{recomment};
     </select>
 
+    <select id="selectAllRank" resultMap="rankMap">
+        SELECT id,rank_name,play_num,picture,recomment,type
+        FROM rank ;
+    </select>
+
 </mapper>

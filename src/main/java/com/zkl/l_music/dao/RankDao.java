@@ -13,4 +13,6 @@ public interface RankDao extends BaseMapper<RankEntity> {
     List<RankEntity> selectRankByType(int type);
 
     List<RankEntity> selectRankByRecomment(int recomment);
+
+    List<RankEntity> selectAllRank();
 }

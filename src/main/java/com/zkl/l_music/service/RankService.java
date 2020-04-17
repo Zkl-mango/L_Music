@@ -11,6 +11,8 @@ public interface RankService {
 
     boolean addRank(RankEntity rankEntity);
 
+    boolean addRankList(RankListEntity rankListEntity);
+
     /**
      * 更新播放量
      * @param id
@@ -21,6 +23,8 @@ public interface RankService {
     Map<Object,Object> getRankList();
 
     RankEntity getRankById(String id);
+
+    List<RankEntity> getAllRank();
 
     /**
      * 获取榜单详情

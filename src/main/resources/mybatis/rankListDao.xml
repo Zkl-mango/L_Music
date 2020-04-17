@@ -14,6 +14,11 @@
                      select="com.zkl.l_music.dao.SongDao.selectById"/>
     </resultMap>
 
+    <insert id="insert">
+        insert into rank_list(id,rank_id,song_id,recomment)
+        values(#{id},#{rankId.id},#{songId.id},#{recomment});
+    </insert>
+
     <select id="selectRankListByRank" resultMap="rankListMap">
         SELECT id,rank_id,song_id,recomment
         FROM rank_list WHERE rank_id = #{rankId};

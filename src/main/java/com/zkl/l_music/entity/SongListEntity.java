@@ -2,11 +2,14 @@ package com.zkl.l_music.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zkl.l_music.util.ConstantUtil;
 import org.apache.ibatis.type.Alias;
 
+import javax.xml.crypto.Data;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 歌曲列表实体
@@ -28,6 +31,8 @@ public class SongListEntity implements Serializable {
     private String tag;             /*列表标签*/
     private int playNum;            /*播放量*/
     private String picture;         /*封面*/
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
+    private Date creatTime;
 
     public String getId() {
         return id;
@@ -101,6 +106,14 @@ public class SongListEntity implements Serializable {
         this.picture = picture;
     }
 
+    public Date getCreatTime() {
+        return creatTime;
+    }
+
+    public void setCreatTime(Date creatTime) {
+        this.creatTime = creatTime;
+    }
+
     @Override
     public String toString() {
         return "SongListEntity{" +
@@ -113,6 +126,7 @@ public class SongListEntity implements Serializable {
                 ", tag='" + tag + '\'' +
                 ", playNum=" + playNum +
                 ", picture='" + picture + '\'' +
+                ", creatTime=" + creatTime +
                 '}';
     }
 }

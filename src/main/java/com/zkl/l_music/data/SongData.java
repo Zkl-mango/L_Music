@@ -31,9 +31,10 @@ public class SongData {
         params.put("id",albumid);
         System.out.println(albumid);
         if(albumid.equals("86524786") || albumid.equals("3265406") || albumid.equals("86993099")
-        || albumid.equals("87054787")) {
+        || albumid.equals("87054787") || albumid.equals("75744498")) {
             return ;
         }
+
         ResponseEntity<String> responseEntity=restTemplate.getForEntity
                 (DataUrlConstant.url+"/album?id={id}",String.class,params);
         if(responseEntity.getStatusCode().is2xxSuccessful()) {
@@ -58,19 +59,19 @@ public class SongData {
                 params.put("song_id",id);
                 //调用api获取歌曲连接
                 String url = "";
-                try{
-                    ResponseEntity<String> responseEntity_url=restTemplate.getForEntity
-                            (DataUrlConstant.url+"/song/url?id={song_id}",String.class,params);
-
-                    if(responseEntity_url.getStatusCode().is2xxSuccessful()) {
-                        JSONObject json_url=JSONObject.parseObject(responseEntity_url.getBody());
-                        JSONArray urlArray = json_url.getJSONArray("data");
-                        url = urlArray.getJSONObject(0).getString("url");
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                    System.out.println("errorsongUrl");
-                }
+//                try{
+//                    ResponseEntity<String> responseEntity_url=restTemplate.getForEntity
+//                            (DataUrlConstant.url+"/song/url?id={song_id}",String.class,params);
+//
+//                    if(responseEntity_url.getStatusCode().is2xxSuccessful()) {
+//                        JSONObject json_url=JSONObject.parseObject(responseEntity_url.getBody());
+//                        JSONArray urlArray = json_url.getJSONArray("data");
+//                        url = urlArray.getJSONObject(0).getString("url");
+//                    }
+//                } catch (Exception e) {
+//                    System.out.println(e);
+//                    System.out.println("errorsongUrl");
+//                }
                 String lyric = "";
                 String klyric = "";
                 try{

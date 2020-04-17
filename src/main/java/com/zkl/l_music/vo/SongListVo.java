@@ -43,7 +43,7 @@ public class SongListVo implements Serializable {
     }
 
     public String getPicture() {
-        return ConstantUtil.listPicdownloadPath + picture;
+        return picture;
     }
 
     public void setPicture(String picture) {

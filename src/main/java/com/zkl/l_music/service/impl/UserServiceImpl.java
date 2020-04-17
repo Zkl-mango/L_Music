@@ -50,8 +50,6 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userBo,userEntity);
         userEntity.setId(uuidGenerator.generateUUID());
-        System.out.println(userBo);
-        System.out.println(userEntity);
         log.info("对用户密码进行加密处理-----");
         userEntity.setPassword(SecurityUtil.encryptPassword(userBo.getPassword()));
         log.info("密码加密处理完成-----");
