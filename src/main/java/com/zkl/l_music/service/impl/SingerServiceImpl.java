@@ -22,6 +22,7 @@ import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class SingerServiceImpl implements SingerService {
     SongService songService;
 
     @Override
+    @Transactional
     public boolean addSinger(SingerEntity singerEntity) {
         int res = singerDao.insert(singerEntity);
         if(res == 1) {
@@ -51,6 +53,7 @@ public class SingerServiceImpl implements SingerService {
 
     //flag:-1,取消关注;1,关注；
     @Override
+    @Transactional
     public boolean updateSinger(String id,int flag,String userId) {
         SingerEntity singerEntity = singerDao.selectById(id);
         singerEntity.setFans(singerEntity.getFans()+flag);
@@ -81,6 +84,7 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
+    @Transactional
     public boolean deleteSinger(String id) {
         int res = singerDao.deleteById(id) ;
         if(res == 1) {
@@ -90,6 +94,7 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
+    @Transactional
     public SingerDetailVo getSingerById(String id,PageBo pageBo,int type) {
         SingerEntity singerEntity = singerDao.selectById(id);
         if(singerEntity==null) {
@@ -123,6 +128,7 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
+    @Transactional
     public List<SingerListVo> getSingers(PageBo pageBo,String sex,int category,String userId) {
         if(sex.equals("全部")) {
             sex = null;
@@ -154,11 +160,13 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
+    @Transactional
     public List<SingerEntity> getSingerByCategory(int category) {
         return singerDao.selectSingerByCat(category);
     }
 
     @Override
+    @Transactional
     public List<SongListDetailVo> getSingerSongs(String id, PageBo pageBo) {
         List<SongListDetailVo> songListDetailVos = new ArrayList<>();
         int page = pageBo.getPage();
@@ -177,6 +185,7 @@ public class SingerServiceImpl implements SingerService {
     }
 
     @Override
+    @Transactional
     public List<SingerVo> getSingersByName(String name,String userId) {
         List<SingerEntity> list = singerDao.selectSingerName(name);
         List<SingerVo> singerVos = new ArrayList<>();

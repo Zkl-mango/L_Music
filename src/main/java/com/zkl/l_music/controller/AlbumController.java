@@ -5,6 +5,7 @@ import com.zkl.l_music.service.AlbumService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.util.ReturnCode;
 import com.zkl.l_music.vo.AlbumDetailVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,8 +72,12 @@ public class AlbumController {
     @GetMapping("/{id}")
     public ResponseEntity getAlbumById(HttpServletRequest request,@PathVariable String id) {
         String userId = request.getHeader("userId");
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             userId = null;
+        } else {
+            if(userId.equals("undefined")) {
+                userId = null;
+            }
         }
         AlbumDetailVo albumDetailVo = albumService.getAlbumById(id,userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(albumDetailVo));

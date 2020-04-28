@@ -176,6 +176,13 @@ public class UserController {
     @GetMapping(value = "/comments")
     public ResponseEntity getUserComment(HttpServletRequest request) {
         String id = request.getHeader("userId");
+        if(StringUtils.isBlank(id)) {
+            id = null;
+        } else {
+            if(id.equals("undefined")) {
+                id = null;
+            }
+        }
         List<MyCommentVo> commentsList = commentsService.getCommentsByUser(id);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(commentsList));
     }
@@ -188,6 +195,13 @@ public class UserController {
     @GetMapping(value = "/likes")
     public ResponseEntity getUserLikeComment(HttpServletRequest request) {
         String id = request.getHeader("userId");
+        if(StringUtils.isBlank(id)) {
+            id = null;
+        } else {
+            if(id.equals("undefined")) {
+                id = null;
+            }
+        }
         List<CommentLikesVo> commentsList = commentsLikeService.getCommentLikeByUser(id);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(commentsList));
     }

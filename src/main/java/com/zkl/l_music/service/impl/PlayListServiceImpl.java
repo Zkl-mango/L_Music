@@ -11,6 +11,7 @@ import com.zkl.l_music.vo.PlayListVo;
 import com.zkl.l_music.vo.SongListDetailVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class PlayListServiceImpl implements PlayListService {
     UUIDGenerator uuidGenerator;
 
     @Override
+    @Transactional
     public String addPlayList(PlayListVo playListVo) {
         playListVo.setId(uuidGenerator.generateUUID());
         int res = playListDao.insertPlayList(playListVo);
@@ -38,6 +40,7 @@ public class PlayListServiceImpl implements PlayListService {
     }
 
     @Override
+    @Transactional
     public boolean updatePlayList(String id,String userId) {
         List<PlayListEntity> playListEntities = playListDao.selectPlaysByUser(userId);
         for(int i=0;i<playListEntities.size();i++) {
@@ -61,6 +64,7 @@ public class PlayListServiceImpl implements PlayListService {
     }
 
     @Override
+    @Transactional
     public boolean deletePlayList(String id) {
         int res = playListDao.deleteById(id);
         if(res == 1) {
@@ -70,6 +74,7 @@ public class PlayListServiceImpl implements PlayListService {
     }
 
     @Override
+    @Transactional
     public boolean deletePlayListByUser(String userId) {
         int res = playListDao.deletedByUser(userId);
         if(res == 1) {
@@ -79,11 +84,13 @@ public class PlayListServiceImpl implements PlayListService {
     }
 
     @Override
+    @Transactional
     public PlayListEntity getPlayListById(String id) {
         return playListDao.selectById(id);
     }
 
     @Override
+    @Transactional
     public List<SongListDetailVo> getPlayListByUser(String userId) {
         List<SongListDetailVo> list = new ArrayList<>();
         List<PlayListEntity> playListEntities = playListDao.selectPlaysByUser(userId);
@@ -92,6 +99,7 @@ public class PlayListServiceImpl implements PlayListService {
             songListDetailVo.setId(playListEntities.get(i).getId());
             songListDetailVo.setSongVo(songService.songChangeVo(playListEntities.get(i).getSongId()));
             songListDetailVo.getSongVo().setLink(String.valueOf(playListEntities.get(i).getIsPlay()));
+            list.add(songListDetailVo);
         }
         return list;
     }

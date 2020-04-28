@@ -15,17 +15,17 @@ class LMusicApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    void SingerData() {
-        SingerData singerData = new SingerData();
-        singerData.getSingerData("1001");
-        System.out.println("okkkk");
-    }
+//    @Test
+//    void SingerData() {
+//        SingerData singerData = new SingerData();
+//        singerData.getSingerData("1001");
+//        System.out.println("okkkk");
+//    }
 
-    @Test
-    void AlbumData() throws ParseException {
-        AlbumData albumData = new AlbumData();
-        albumData.getAlbumData(null,1);
-        System.out.println("okkkk");
-    }
+//    @Test
+//    void AlbumData() throws ParseException {
+//        AlbumData albumData = new AlbumData();
+//        albumData.getAlbumData(null,1);
+//        System.out.println("okkkk");
+//    }
 }

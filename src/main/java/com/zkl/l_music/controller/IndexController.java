@@ -53,8 +53,12 @@ public class IndexController {
     @PostMapping("/search")
     public ResponseEntity searchSinger(HttpServletRequest request,@RequestBody UserBo userBo) {
         String userId = request.getHeader("userId");
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             userId = null;
+        } else {
+            if(userId.equals("undefined")) {
+                userId = null;
+            }
         }
         List<SingerVo> list = singerService.getSingersByName(userBo.getName(),userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));

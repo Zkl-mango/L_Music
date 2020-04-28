@@ -115,19 +115,24 @@ public class SongController {
     public ResponseEntity songCheck(HttpServletRequest request, @PathVariable String id) {
         Map res = new HashMap();
         String userId = request.getHeader("userId");
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             userId = null;
-            res.put("like",false);
         } else {
-            //查看该歌曲是否收藏
-            List<SongListVo> likeEntity = songListService.getSongListByUser(userId, 2);
-            SongDetailsEntity songDetailsEntity = songDetailsService.getSongDetailsBySongAndList(likeEntity.get(0).getId(),id);
-            if(songDetailsEntity == null) {
+            if(userId.equals("undefined")) {
+                userId = null;
                 res.put("like",false);
             } else {
-                res.put("like",true);
+                //查看该歌曲是否收藏
+                List<SongListVo> likeEntity = songListService.getSongListByUser(userId, 2);
+                SongDetailsEntity songDetailsEntity = songDetailsService.getSongDetailsBySongAndList(likeEntity.get(0).getId(),id);
+                if(songDetailsEntity == null) {
+                    res.put("like",false);
+                } else {
+                    res.put("like",true);
+                }
             }
         }
+
         RestTemplate restTemplate=new RestTemplate();
         ResponseEntity<String> responseEntity;
         Boolean type ;

@@ -12,7 +12,7 @@
         <result column="tag" property="tag"/>
         <result column="playNum" property="play_num"/>
         <result column="picture" property="picture"/>
-        <result column="create_time" property="creatTime"/>
+        <result column="create_time" property="createTime"/>
         <association property="userId" column="user_id"
                      javaType="com.zkl.l_music.entity.UserEntity"
                      select="com.zkl.l_music.dao.UserDao.selectById"/>
@@ -50,5 +50,11 @@
         WHERE category = 1
         <if test="tag!=null">and tag LIKE '%${tag}%' </if>
         ORDER BY like_num desc
+    </select>
+
+
+    <select id="selectAllSongList" resultMap="songListMap">
+        SELECT id,list_name,category,user_id,introduction,like_num,tag,play_num,picture,create_time FROM song_list
+        WHERE category = 1
     </select>
 </mapper>

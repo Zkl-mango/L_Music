@@ -11,6 +11,7 @@ import com.zkl.l_music.vo.RankDetailVo;
 import com.zkl.l_music.vo.RankVo;
 import com.zkl.l_music.vo.SongVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class RankServiceImpl implements RankService {
     SongService songService;
 
     @Override
+    @Transactional
     public boolean addRank(RankEntity rankEntity) {
         if(rankEntity == null) {
             return false;
@@ -41,6 +43,7 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
+    @Transactional
     public boolean addRankList(RankListEntity rankListEntity) {
         if(rankListEntity == null) {
             return false;
@@ -53,6 +56,7 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
+    @Transactional
     public boolean updateRank(String id) {
         RankEntity rankEntity = rankDao.selectById(id);
         if(rankEntity == null) {
@@ -68,6 +72,7 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
+    @Transactional
     public Map<Object, Object> getRankList() {
         List<RankEntity> rankList = rankDao.selectRankByRecomment(1);
         List<RankEntity> highs = rankDao.selectRankByType(ConstantUtil.dianfeng);
@@ -95,16 +100,19 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
+    @Transactional
     public RankEntity getRankById(String id) {
         return rankDao.selectById(id);
     }
 
     @Override
+    @Transactional
     public List<RankEntity> getAllRank() {
         return rankDao.selectAllRank();
     }
 
     @Override
+    @Transactional
     public List<RankDetailVo> getRankListById(String id) {
         List<RankListEntity> rankListEntities = rankListDao.selectRankListByRank(id);
         List<RankDetailVo> list = this.changeRankDetailVo(rankListEntities);

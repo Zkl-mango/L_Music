@@ -7,6 +7,7 @@ import com.zkl.l_music.service.UserService;
 import com.zkl.l_music.util.ApiResponse;
 import com.zkl.l_music.vo.SongListDetailVo;
 import com.zkl.l_music.vo.SongListVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,11 +36,16 @@ public class RecommentController {
     public ResponseEntity getAlbumsBySinger(HttpServletRequest request) {
         Map<String,Object> res = new HashMap<>();
         String userId = request.getHeader("userId");
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             userId = "1";
             res.put("name","你好");
         } else {
-            res.put("name",userService.getUserById(userId).getName());
+            if(userId.equals("undefined")) {
+                userId = "1";
+                res.put("name","你好");
+            } else {
+                res.put("name",userService.getUserById(userId).getName());
+            }
         }
         List<SongListDetailVo> list = recommentService.getRecommentsSong(userId);
         List<SongListVo> songListVos = recommentService.getRecommentsList(userId);

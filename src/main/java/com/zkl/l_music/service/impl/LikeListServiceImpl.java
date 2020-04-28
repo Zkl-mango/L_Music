@@ -14,6 +14,7 @@ import com.zkl.l_music.vo.AlbumVo;
 import com.zkl.l_music.vo.SongListVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class LikeListServiceImpl implements LikeListService {
     @Resource
     SongDetailsService songDetailsService;
 
+    @Transactional
     @Override
     public boolean deleteLikeList(String id,int type) {
         LikeListEntity likeListEntity = likeListDao.selectById(id);
@@ -58,6 +60,7 @@ public class LikeListServiceImpl implements LikeListService {
     }
 
     @Override
+    @Transactional
     public List<SongListVo> getLikeListByUser(String userId, int type) {
         List<LikeListEntity> likeList =  likeListDao.selectLikeListByType(userId,type);
         List<SongListVo> songListVos = new ArrayList<>();
@@ -66,14 +69,16 @@ public class LikeListServiceImpl implements LikeListService {
                 SongListEntity songListEntity = songListDao.selectById(likeList.get(i).getLinkId());
                 SongListVo songListVo = new SongListVo();
                 BeanUtils.copyProperties(songListEntity,songListVo);
-                songListVo.setSongNum(songDetailsService.countSongDetailsByList(likeList.get(i).getId()));
+                songListVo.setSongNum(songDetailsService.countSongDetailsByList(songListEntity.getId()));
                 songListVo.setId(likeList.get(i).getId());
+                songListVo.setListId(songListEntity.getId());
                 songListVos.add(songListVo);
             }
         }
         return songListVos;
     }
 
+    @Transactional
     @Override
     public List<AlbumVo> getLikeListAlbumByUser(String userId, int type) {
         List<LikeListEntity> likeList =  likeListDao.selectLikeListByType(userId,type);
@@ -86,6 +91,7 @@ public class LikeListServiceImpl implements LikeListService {
                 albumVo.setSongNum(albumEntity.getSongs());
                 albumVo.setListName(albumEntity.getName());
                 albumVo.setId(likeList.get(i).getId());
+                albumVo.setAlbumId(albumEntity.getId());
                 songListVos.add(albumVo);
             }
         }

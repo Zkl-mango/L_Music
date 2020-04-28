@@ -16,6 +16,7 @@ import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class SongDetailsServiceImpl implements SongDetailsService {
     SongService songService;
 
     @Override
+    @Transactional
     public boolean addSongDetails(SongDetailBo songDetailBo) {
         SongDetailsEntity songDetailsEntity  = songDetailsDao.selectSongDetailsBySongAndList(songDetailBo.getSongList(),songDetailBo.getSongId());
         if(songDetailsEntity != null) {
@@ -64,6 +66,7 @@ public class SongDetailsServiceImpl implements SongDetailsService {
 
     //删除某一首歌
     @Override
+    @Transactional
     public boolean updateSongDetails(String id) {
         SongDetailsEntity songDetailsEntity = songDetailsDao.selectById(id);
         if(songDetailsEntity == null) {
@@ -78,6 +81,7 @@ public class SongDetailsServiceImpl implements SongDetailsService {
     }
 
     @Override
+    @Transactional
     public boolean deleteSongDetails(String id) {
         int res = songDetailsDao.deleteById(id);
         if(res == 1) {
@@ -87,12 +91,14 @@ public class SongDetailsServiceImpl implements SongDetailsService {
     }
 
     @Override
+    @Transactional
     public boolean deleteSongDetailsByList(String listId) {
         boolean res = songDetailsDao.deleteSongDetailsByListId(listId);
         return true;
     }
 
     @Override
+    @Transactional
     public SongDetailsEntity getSongDetailsById(String id) {
         return songDetailsDao.selectById(id);
     }
@@ -103,6 +109,7 @@ public class SongDetailsServiceImpl implements SongDetailsService {
      * @return
      */
     @Override
+    @Transactional
     public List<SongListDetailVo> getSongDetailsByList(String listId) {
         List<SongDetailsEntity> list = songDetailsDao.selectSongDetailsByListId(listId);
         List<SongListDetailVo> listDetailVos = new ArrayList<>();
@@ -118,11 +125,13 @@ public class SongDetailsServiceImpl implements SongDetailsService {
     }
 
     @Override
+    @Transactional
     public int countSongDetailsByList(String listId) {
         return songDetailsDao.countSongsByList(listId);
     }
 
     @Override
+    @Transactional
     public SongDetailsEntity getSongDetailsBySongAndList(String listId, String songId) {
         return songDetailsDao.selectSongDetailsBySongAndList(listId,songId);
     }

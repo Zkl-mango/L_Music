@@ -14,6 +14,7 @@ import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
@@ -41,6 +42,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     SongService songService;
 
     @Override
+    @Transactional
     public boolean addHistoryList(String songId, String userId,int type) {
         HistoryListEntity historyListEntity = historyListDao.selectHistoryByUserAndSong(userId,songId,type);
         if(historyListEntity != null) {
@@ -63,6 +65,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     }
 
     @Override
+    @Transactional
     public boolean updateHistoryList(HistoryListEntity historyListEntity) {
         int res = historyListDao.updateById(historyListEntity);
         if(res == 1) {
@@ -72,6 +75,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     }
 
     @Override
+    @Transactional
     public boolean deleteHistoryList(String id) {
         int res = historyListDao.deleteById(id);
         if( res == 1) {
@@ -80,6 +84,7 @@ public class HistoryListServiceImpl implements HistoryListService {
         return false;
     }
 
+    @Transactional
     @Override
     public boolean deleteHistoryLists(String userId, int type) {
         int res = historyListDao.deletedHistorys(userId,type);
@@ -87,6 +92,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     }
 
     @Override
+    @Transactional
     public HistoryListEntity getHistoryListById(String id) {
         return historyListDao.selectById(id);
     }
@@ -97,6 +103,7 @@ public class HistoryListServiceImpl implements HistoryListService {
      * @return
      */
     @Override
+    @Transactional
     public List<HistoryListVo> getHistoryListByUser(String userId) {
         List<HistoryListEntity> list = historyListDao.selectHistorysByUser(userId,1);
         List<HistoryListVo> historyListVos = new ArrayList<>();
@@ -112,6 +119,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     }
 
     @Override
+    @Transactional
     public List<SongListVo> getHistorySongByUser(String userId, int type) {
         List<HistoryListEntity> list = historyListDao.selectHistorysByUser(userId,type);
         List<SongListVo> songListVos = new ArrayList<>();
@@ -122,6 +130,7 @@ public class HistoryListServiceImpl implements HistoryListService {
                 SongListVo songListVo = new SongListVo();
                 BeanUtils.copyProperties(songListEntity,songListVo);
                 songListVo.setSongNum(songDetailsService.countSongDetailsByList(list.get(i).getLinkId()));
+                songListVo.setListId(songListEntity.getId());
                 songListVos.add(songListVo);
             }
         }
@@ -129,6 +138,7 @@ public class HistoryListServiceImpl implements HistoryListService {
     }
 
     @Override
+    @Transactional
     public List<AlbumVo> getHistoryAlbumByUser(String userId, int type) {
         List<HistoryListEntity> list = historyListDao.selectHistorysByUser(userId,type);
         List<AlbumVo> albumEntityList = new ArrayList<>();
@@ -140,6 +150,7 @@ public class HistoryListServiceImpl implements HistoryListService {
                 BeanUtils.copyProperties(albumEntity,albumVo);
                 albumVo.setSongNum(albumEntity.getSongs());
                 albumVo.setListName(albumEntity.getName());
+                albumVo.setAlbumId(albumEntity.getId());
                 albumEntityList.add(albumVo);
             }
         }

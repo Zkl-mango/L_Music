@@ -51,6 +51,7 @@ public class CommentsServiceImpl implements CommentsService {
     CommentsLikeService commentsLikeService;
 
     @Override
+    @Transactional
     public boolean addComments(CommentsBo commentsBo, String userId) {
         CommentsEntity commentsEntity = new CommentsEntity();
         commentsEntity.setId(uuidGenerator.generateUUID());
@@ -68,6 +69,7 @@ public class CommentsServiceImpl implements CommentsService {
         return false;
     }
 
+    @Transactional
     @Override
     public boolean updateCommentsLike(String id,int type) {
         CommentsEntity commentsEntity = commentsDao.selectById(id);
@@ -94,6 +96,7 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
+    @Transactional
     public boolean deleteComments(String id, String userId) {
         CommentsEntity commentsEntity = commentsDao.selectById(id);
         if(commentsEntity == null) {
@@ -110,11 +113,13 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
+    @Transactional
     public CommentsEntity getCommentById(String id) {
         return commentsDao.selectById(id);
     }
 
     @Override
+    @Transactional
     public CommentsVo getCommentsBySong(PageBo pageBo,String songId,String userId) {
         //更新评论的点赞数
         List<CommentsEntity> commentsEntities = commentsLikeService.getLikedCountFromRedis();
@@ -151,6 +156,7 @@ public class CommentsServiceImpl implements CommentsService {
         return commentsVo;
     }
 
+    @Transactional
     @Override
     public List<MyCommentVo> getCommentsByUser(String userId) {
         List<CommentsEntity> list = commentsDao.selectCommentsByUser(userId);

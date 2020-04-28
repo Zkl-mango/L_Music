@@ -56,7 +56,7 @@ public class SongListServiceImpl implements SongListService {
         songListEntity.setUserId(userDao.selectById(id));
         songListEntity.setPicture(ConstantUtil.listPicdownloadPath + ConstantUtil.listPic);
         songListEntity.setCategory(category);
-        songListEntity.setCreatTime(new Date());
+        songListEntity.setCreateTime(new Date());
         int res = songListDao.insert(songListEntity);
         if(res == 1) {
             return songListEntity.getId();
@@ -107,6 +107,7 @@ public class SongListServiceImpl implements SongListService {
     }
 
     @Override
+    @Transactional
     public boolean updateSongListNum(String id, int flag, int type,String userId) {
         SongListEntity songListEntity = songListDao.selectById(id);
         if(songListEntity == null) {
@@ -139,6 +140,7 @@ public class SongListServiceImpl implements SongListService {
 
     //删除歌单
     @Override
+    @Transactional
     public boolean deleteSongList(String id) {
         int res = songListDao.deleteById(id);
         if(res == 1) {
@@ -150,6 +152,7 @@ public class SongListServiceImpl implements SongListService {
 
     //通过歌单id获取歌单详情
     @Override
+    @Transactional
     public SongListVo getSongListById(String id,String userId) {
         SongListEntity songListEntity = songListDao.selectById(id);
         if(songListEntity == null) {
@@ -173,6 +176,7 @@ public class SongListServiceImpl implements SongListService {
 
     //获取用户歌单
     @Override
+    @Transactional
     public List<SongListVo> getSongListByUser(String userId,int category) {
         List<SongListEntity> songList =  songListDao.selectSongListByUser(userId,category);
         List<SongListVo> songListVos = new ArrayList<>();
@@ -180,12 +184,14 @@ public class SongListServiceImpl implements SongListService {
             SongListVo songListVo = new SongListVo();
             BeanUtils.copyProperties(songList.get(i),songListVo);
             songListVo.setSongNum(songDetailsService.countSongDetailsByList(songList.get(i).getId()));
+            songListVo.setListId(songList.get(i).getId());
             songListVos.add(songListVo);
         }
         return songListVos;
     }
 
     @Override
+    @Transactional
     public List<SongListVo> getLikeSongList() {
         List<SongListEntity> list = songListDao.selectLikeSongList();
         List<SongListVo> songListVos = new ArrayList<>();
@@ -198,6 +204,7 @@ public class SongListServiceImpl implements SongListService {
     }
 
     @Override
+    @Transactional
     public List<SongListVo> getHotSongList() {
         List<SongListEntity> list = songListDao.selectPlaySongList();
         List<SongListVo> songListVos = new ArrayList<>();
@@ -210,6 +217,7 @@ public class SongListServiceImpl implements SongListService {
     }
 
     @Override
+    @Transactional
     public PageInfoVo getSongListByTag(PageBo pageBo, String tag) {
         Page page = new Page(pageBo.getPage(),pageBo.getSize());
         if(tag.equals("推荐")) {

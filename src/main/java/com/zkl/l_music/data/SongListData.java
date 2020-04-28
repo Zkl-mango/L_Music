@@ -2,7 +2,10 @@ package com.zkl.l_music.data;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zkl.l_music.bo.UserBo;
+import com.zkl.l_music.dao.SongDao;
 import com.zkl.l_music.dao.SongDetailsDao;
 import com.zkl.l_music.dao.SongListDao;
 import com.zkl.l_music.dao.UserDao;
@@ -15,13 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import sun.plugin.util.UIUtil;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -40,13 +42,15 @@ public class SongListData {
     SongDetailsDao songDetailsDao;
     @Resource
     RankData rankData;
+    @Resource
+    SongDao songDao;
 
     public void getSongListData(String cat) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> params = new HashMap<>();
         params.put("cat", cat);
         ResponseEntity<String> responseEntity = restTemplate.getForEntity
-                (DataUrlConstant.url + "/top/playlist?limit=350&cat={cat}&order=hot", String.class, params);
+                (DataUrlConstant.url + "/top/playlist?limit=300&cat={cat}&order=hot", String.class, params);
         JSONObject jsonobj = JSONObject.parseObject(responseEntity.getBody());
         JSONArray jsonArray = jsonobj.getJSONArray("playlists");
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -99,12 +103,12 @@ public class SongListData {
             songListEntity.setPicture(picture);
             songListEntity.setListName(listName);
             songListEntity.setCategory(1);
-            songListEntity.setCreatTime(date);
+            songListEntity.setCreateTime(date);
             songListEntity.setIntroduction(introduction);
             songListEntity.setTag(tag);
             songListEntity.setUserId(userEntity);
             songListDao.insert(songListEntity);
-            System.out.println("songList---"+cat+" to "+i+"id"+id);
+            System.out.println("songList---"+cat+" to "+i+" id "+id);
             getSongListDetailData(id);
         }
     }
@@ -120,7 +124,11 @@ public class SongListData {
         JSONObject jsonobj = JSONObject.parseObject(responseEntity.getBody());
         JSONObject jsonObject = jsonobj.getJSONObject("playlist");
         JSONArray jsonArray = jsonObject.getJSONArray("tracks");
-        for (int i = 0; i < jsonArray.size(); i++) {
+        int length = jsonArray.size();
+        if(jsonArray.size()>100) {
+            length = 101;
+        }
+        for (int i = 0; i < length; i++) {
             JSONObject json = jsonArray.getJSONObject(i);
             String songId = json.getString("id");
 
@@ -134,5 +142,30 @@ public class SongListData {
             songDetailsEntity.setSongId(songEntity);
             songDetailsDao.insert(songDetailsEntity);
         }
+    }
+
+
+    public int songCatData(int pages) {
+        Page page = new Page(pages,100);
+        IPage iPage= songListDao.selectAllSongList(page);
+        List<SongListEntity> songListEntities = iPage.getRecords();
+        for(int i=0;i<songListEntities.size();i++) {
+            System.out.println("page--"+pages+" songList-"+i+" "+songListEntities.get(i).getId());
+            String[] strs = songListEntities.get(i).getTag().split(",");
+            List<SongDetailsEntity> list = songDetailsDao.selectSongDetailsByListId(songListEntities.get(i).getId());
+            for(int j=0;j<list.size();j++) {
+                System.out.println(list.get(j).getSongId().getId());
+                SongEntity song = songDao.selectById(list.get(j).getSongId().getId());
+                for(int z=0;z<strs.length;z++) {
+                    if(song.getCategory().contains(strs[z])) {
+                        continue;
+                    }
+                    song.setCategory(song.getCategory()+","+strs[z]);
+                    songDao.updateById(song);
+                }
+            }
+            System.out.println("page--"+pages+" songListok-"+i+" "+songListEntities.get(i).getId());
+        }
+        return (int) iPage.getTotal();
     }
 }

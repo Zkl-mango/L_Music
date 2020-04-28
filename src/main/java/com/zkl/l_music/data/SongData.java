@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zkl.l_music.dao.SongDao;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.SongEntity;
+import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.service.SongService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -116,4 +118,5 @@ public class SongData {
         }
 
     }
+
 }

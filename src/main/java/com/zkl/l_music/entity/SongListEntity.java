@@ -32,7 +32,7 @@ public class SongListEntity implements Serializable {
     private int playNum;            /*播放量*/
     private String picture;         /*封面*/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm")
-    private Date creatTime;
+    private Date createTime;
 
     public String getId() {
         return id;
@@ -106,12 +106,12 @@ public class SongListEntity implements Serializable {
         this.picture = picture;
     }
 
-    public Date getCreatTime() {
-        return creatTime;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreatTime(Date creatTime) {
-        this.creatTime = creatTime;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SongListEntity implements Serializable {
                 ", tag='" + tag + '\'' +
                 ", playNum=" + playNum +
                 ", picture='" + picture + '\'' +
-                ", creatTime=" + creatTime +
+                ", createTime=" + createTime +
                 '}';
     }
 }

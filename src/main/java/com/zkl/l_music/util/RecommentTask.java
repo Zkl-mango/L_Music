@@ -23,7 +23,7 @@ public class RecommentTask extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info("RecommentTask---start----- {}", sdf.format(new Date()));
-        recommentCF.recommentUser();
+//        recommentCF.recommentUser();
         recommentService.insertNorRecomment();
         log.info("RecommentTask---end----- {}", sdf.format(new Date()));
     }

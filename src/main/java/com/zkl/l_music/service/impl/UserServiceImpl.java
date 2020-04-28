@@ -7,6 +7,7 @@ import com.zkl.l_music.dao.SingerDao;
 import com.zkl.l_music.dao.SongListDao;
 import com.zkl.l_music.dao.UserDao;
 import com.zkl.l_music.dto.FollowsDto;
+import com.zkl.l_music.entity.AuthEntity;
 import com.zkl.l_music.entity.SingerEntity;
 import com.zkl.l_music.entity.SongListEntity;
 import com.zkl.l_music.entity.UserEntity;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
     LikeListService likeListService;
 
     @Override
+    @Transactional
     public UserEntity addUser(UserBo userBo) throws Exception {
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userBo,userEntity);
@@ -72,6 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean updateUserAvatar(MultipartFile file,String id) {
         log.info("开始更新头像信息-----");
         String avatar = HandleAvatarUtil.save(file,1);
@@ -86,6 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean updateUser(UserBo userBo,String id) {
         UserEntity userEntity = userDao.selectById(id);
         if(userEntity==null) {
@@ -100,6 +105,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean deleteUser(String id) {
         UserEntity userEntity = userDao.selectById(id);
         if(userEntity==null) {
@@ -123,6 +129,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserVo getUserById(String id) {
         UserEntity userEntity =  userDao.selectById(id);
         if(userEntity==null) {
@@ -152,6 +159,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean updateUserPassword(UserPwdBo userPwdBo) {
         UserEntity userEntity = userDao.selectUserByPhoneAndName(userPwdBo.getPhone(),userPwdBo.getName());
         if(userEntity == null) {
@@ -167,6 +175,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Map<String,Object> judgeLogin(HttpServletRequest request, LoginBo loginBo) {
         Map<String,Object> res = new HashMap<String,Object>();
         UserEntity userEntity = userDao.selectUserByPhone(loginBo.getPhone());
@@ -176,8 +185,12 @@ public class UserServiceImpl implements UserService {
         }
         try {
             if(userEntity.getPassword().equals(SecurityUtil.encryptPassword(loginBo.getPassword()))){
+                AuthEntity authEntity = authService.getAuth(userEntity);
+                if(authEntity == null) {
+                    authEntity = authService.addToken(userEntity);
+                }
                 res.put("message","登录成功");
-                res.put("auth", authService.getAuth(userEntity));
+                res.put("auth", authEntity);
                 return res;
             }
             res.put("message","密码不正确，请重新输入");
@@ -189,6 +202,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean judgeUserNameAndPhone(String name,int type,String id) {
         if(type == 0) {
             //判断是否有重复的手机号

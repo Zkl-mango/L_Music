@@ -113,56 +113,60 @@ public class RecommentCF {
             int recommendUserId = userID.get(recommendUser);
             List<RecommentEntity> userLists = new ArrayList<>();
             for (int j = 0;j < sparseMatrix.length; j++) {
-                if(j != recommendUserId){
+                if (j != recommendUserId) {
                     double itemRecommendDegree = 0.0;
-                    if(Math.sqrt(userItemLength.get(idUser.get(recommendUserId))*userItemLength.get(idUser.get(j))) == 0.0) {
+                    if (Math.sqrt(userItemLength.get(idUser.get(recommendUserId)) * userItemLength.get(idUser.get(j))) == 0.0) {
                         itemRecommendDegree = 0.0;
                     } else {
                         itemRecommendDegree = sparseMatrix[recommendUserId][j] / Math.sqrt(userItemLength.get(idUser.get(recommendUserId)) * userItemLength.get(idUser.get(j)));
                     }
-                    System.out.println("iiiiiii "+itemRecommendDegree);
-                    log.info(idUser.get(recommendUserId)+"--"+idUser.get(j)+"相似度:"+itemRecommendDegree);
+                    log.info(idUser.get(recommendUserId) + "--" + idUser.get(j) + "相似度:" + itemRecommendDegree);
                     RecommentEntity recommentEntity = new RecommentEntity();
                     recommentEntity.setType(itemRecommendDegree);
                     recommentEntity.setUserId(userDao.selectById(recommendUser));
-                    System.out.println("aaa "+recommentEntity);
                     userLists.add(recommentEntity);
                 }
-                //根据推荐度排序
-                Collections.sort(userLists, new Comparator<RecommentEntity>(){
-                    @Override
-                    public int compare(RecommentEntity o1, RecommentEntity o2) {
-                        if(o1.getType() > o2.getType()) {
-                            return -1;
-                        } else {
-                            return 1;
-                        }
+            }
+            //根据推荐度排序
+            Collections.sort(userLists, new Comparator<RecommentEntity>(){
+                @Override
+                public int compare(RecommentEntity o1, RecommentEntity o2) {
+                    if(o1.getType() == o2.getType()) {
+                        return 0;
                     }
-                });
-                for(int z=0;z<userLists.size();z++) {
-                    if(songLists.size()==3) {
-                        break;
+                    if(o1.getType() > o2.getType()) {
+                        return -1;
+                    } else {
+                        return 1;
                     }
-                    List<SongListEntity> songListVos = songListDao.selectSongListByUser(userLists.get(z).getUserId().getId(),1);
-                    System.out.println(z+" "+userLists.get(z));
-                    for(int y = 0;y<songListVos.size();y++) {
-                        if(songLists.size()==3) {
-                            break;
-                        }
-                        RecommentEntity recommentEntity = new RecommentEntity();
-                        recommentEntity.setId(uuidGenerator.generateUUID());
-                        recommentEntity.setType(userLists.get(z).getType());
-                        recommentEntity.setLinkId(songListVos.get(y).getId());
-                        recommentEntity.setLinkType(ConstantUtil.listType);
-                        recommentEntity.setUserId(userDao.selectById(recommendUser));
-                        recommentDao.insert(recommentEntity);
-                        songLists.add(recommentEntity);
-                    }
+                }
+            });
+            for(int z=0;z<userLists.size();z++) {
+                if(songLists.size()==3) {
+                    songLists = new ArrayList<>();
+                    break;
+                }
+                int size=3;
+                List<SongListEntity> songListVos = songListDao.selectSongListByUser(userLists.get(z).getUserId().getId(),1);
+                if(songListVos.size()<=3) {
+                    size = songListVos.size();
+                } else {
+                    size = 3;
+                }
+                for(int y = 0;y<size;y++) {
+                    RecommentEntity recommentEntity = new RecommentEntity();
+                    recommentEntity.setId(uuidGenerator.generateUUID());
+                    recommentEntity.setType(userLists.get(z).getType());
+                    recommentEntity.setLinkId(songListVos.get(y).getId());
+                    recommentEntity.setLinkType(ConstantUtil.listType);
+                    recommentEntity.setUserId(userDao.selectById(recommendUser));
+                    recommentDao.insert(recommentEntity);
+                    songLists.add(recommentEntity);
                 }
             }
 
             //计算指定用户recommendUser的听歌推荐度
-            for(String item: items){//遍历每一首歌曲
+            for(String item: items){ //遍历每一首歌曲
                 Set<String> users = itemUserCollection.get(item);//得到购买当前歌曲的所有用户集合
                 if(!users.contains(recommendUser)){//如果被推荐用户没有听过这首歌，则进行推荐度计算
                     double itemRecommendDegree = 0.0;
@@ -187,6 +191,9 @@ public class RecommentCF {
             Collections.sort(songIds, new Comparator<RecommentEntity>(){
                 @Override
                 public int compare(RecommentEntity o1, RecommentEntity o2) {
+                    if(o1.getType() == o2.getType()) {
+                        return 0;
+                    }
                     if(o1.getType() > o2.getType()) {
                         return -1;
                     } else {

@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ public class AlbumServiceImpl implements AlbumService {
     @Resource
     UUIDGenerator uuidGenerator;
 
+
+    @Transactional
     @Override
     public boolean addAlbum(AlbumEntity albumEntity) {
         int res = albumDao.insert(albumEntity);
@@ -55,6 +58,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     //flag:-1,取消收藏;1,收藏；
+    @Transactional
     @Override
     public boolean updateAlbumByFlag(String id,int flag,String userId) {
         AlbumEntity albumEntity = albumDao.selectById(id);
@@ -84,6 +88,7 @@ public class AlbumServiceImpl implements AlbumService {
         return false;
     }
 
+    @Transactional
     @Override
     public boolean updateAlbum(AlbumEntity albumEntity) {
         int res = albumDao.updateById(albumEntity);
@@ -93,6 +98,7 @@ public class AlbumServiceImpl implements AlbumService {
         return false;
     }
 
+    @Transactional
     @Override
     public boolean deleteAlbum(String id) {
         int res = albumDao.deleteById(id);
@@ -102,6 +108,7 @@ public class AlbumServiceImpl implements AlbumService {
         return false;
     }
 
+    @Transactional
     @Override
     public AlbumDetailVo getAlbumById(String id,String userId) {
         AlbumEntity albumEntity = albumDao.selectById(id);
@@ -133,6 +140,7 @@ public class AlbumServiceImpl implements AlbumService {
         return albumDetailVo;
     }
 
+    @Transactional
     @Override
     public AlbumEntity getAlbumEntityById(String id) {
         return albumDao.selectById(id);
@@ -143,6 +151,7 @@ public class AlbumServiceImpl implements AlbumService {
      * @param singerId
      * @return
      */
+    @Transactional
     @Override
     public List<AlbumEntity> getAlbumsBySinger(PageBo pageBo, String singerId) {
         SingerEntity singerEntity = singerDao.selectById(singerId);
@@ -155,6 +164,7 @@ public class AlbumServiceImpl implements AlbumService {
         return list;
     }
 
+    @Transactional
     @Override
     public List<AlbumEntity> getAllAlbumsBySinger(String singerId) {
         SingerEntity singerEntity = singerDao.selectById(singerId);
@@ -169,11 +179,13 @@ public class AlbumServiceImpl implements AlbumService {
      * 查找最新的3个专辑，除了本专辑以外
      * @return
      */
+    @Transactional
     @Override
     public List<AlbumEntity> getNewAlbumsBySinger(String id,String singerId) {
         return albumDao.selectNewAlbumsBySinger(id,singerId);
     }
 
+    @Transactional
     @Override
     public List<AlbumEntity> getNewAlbum() {
         return albumDao.selectNewAlbum();

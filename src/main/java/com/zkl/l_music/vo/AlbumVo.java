@@ -22,4 +22,5 @@ public class AlbumVo {
     private String type;    /*类型*/
     private int songNum;      /*歌曲数*/
     private String singerList;      /*多个歌手的id集合*/
+    private String albumId;
 }

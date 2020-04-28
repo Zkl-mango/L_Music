@@ -19,4 +19,5 @@ public interface SongListDao extends BaseMapper<SongListEntity> {
 
     IPage<SongListEntity> selectSongListByTag(Page page,String tag);
 
+    IPage<SongListEntity> selectAllSongList(Page page);
 }

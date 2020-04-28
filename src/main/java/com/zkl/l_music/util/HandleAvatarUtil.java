@@ -1,9 +1,7 @@
 package com.zkl.l_music.util;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 
 public class HandleAvatarUtil {

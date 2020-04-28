@@ -46,6 +46,7 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     RedisTemplate redisTemplate;
 
     @Override
+    @Transactional
     public boolean addCommentsLike(CommentsLikeEntity commentsLikeEntity) {
         commentsLikeEntity.setId(uuidGenerator.generateUUID());
         int res = commentsLikeDao.insert(commentsLikeEntity);
@@ -84,6 +85,7 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     }
 
     @Override
+    @Transactional
     public List<CommentsLikeEntity> getLikedDataFromRedis() {
         Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(RedisKeyUtils.MAP_KEY_COMMENT_LIKED, ScanOptions.NONE);
         List<CommentsLikeEntity> list = new ArrayList<>();
@@ -146,6 +148,7 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     }
 
     @Override
+    @Transactional
     public CommentsDetailVo getCommentByUser(String userId, CommentsEntity commentsEntity) {
         CommentsDetailVo commentsDetailVo = new CommentsDetailVo();
         BeanUtils.copyProperties(commentsEntity,commentsDetailVo);
@@ -182,6 +185,7 @@ public class CommentsLikeServiceImpl implements CommentsLikeService {
     }
 
     @Override
+    @Transactional
     public List<CommentLikesVo> getCommentLikeByUser(String userId) {
         List<CommentLikesVo> list = new ArrayList<>();
         //从redis获取点赞列表

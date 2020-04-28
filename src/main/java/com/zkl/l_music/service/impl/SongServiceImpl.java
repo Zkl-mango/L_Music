@@ -17,6 +17,7 @@ import com.zkl.l_music.vo.SongVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class SongServiceImpl implements SongService {
     SingerDao singerDao;
 
     @Override
+    @Transactional
     public boolean addSong(SongEntity songEntity) {
         int res = songDao.insert(songEntity);
         if(res == 1) {
@@ -45,6 +47,7 @@ public class SongServiceImpl implements SongService {
     //hot,increase:1添加，-1取消，0不更改
     //recommend：1推荐，0不推荐,-1不修改
     @Override
+    @Transactional
     public boolean updateSong(String id,int hot,int recommend) {
         SongEntity songEntity = songDao.selectById(id);
         if(songEntity == null) {
@@ -62,6 +65,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public boolean deleteSong(String id) {
         int res = songDao.deleteById(id);
         if(res == 1) {
@@ -71,6 +75,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public SongVo getSongById(String id) {
          SongEntity songEntity = songDao.selectById(id);
          if(songEntity == null) {
@@ -81,6 +86,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public List<SongVo> getSongsByAlbum(String albumId) {
         List<SongEntity> list = songDao.selectSongsByAlbum(albumId);
         List<SongVo> songVoList = this.songDetails(list);
@@ -88,6 +94,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public PageInfoVo getSongsByCategory(PageBo pageBo,int category) {
         Page page = new Page(pageBo.getPage(),pageBo.getSize());
         IPage iPage = songDao.selectSongsByCategory(page,category);
@@ -97,6 +104,7 @@ public class SongServiceImpl implements SongService {
         return PageUtils.generatePageVo(iPage);
     }
 
+    @Transactional
     @Override
     public PageInfoVo getSongsBySinger(PageBo pageBo,String singerId) {
         Page page = new Page(pageBo.getPage(),pageBo.getSize());
@@ -133,6 +141,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public List<SongListDetailVo> getSongsByHot() {
         List<SongEntity> list = songDao.selectSongsByHot();
         List<SongVo> songDetails = this.songDetails(list);
@@ -146,6 +155,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public List<SongEntity> getSongsByRecomment() {
         List<SongEntity> list = songDao.selectSongsByRecomment();
         return list;

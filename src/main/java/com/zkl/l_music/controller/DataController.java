@@ -116,11 +116,20 @@ public class DataController {
 
     @RequestMapping("/songList")
     public ResponseEntity getSongListFromApi() throws Exception {
-        List<SmallTagEntity> tags = tagService.getSmallTagByCat(0);
-        for(int i=2;i<tags.size();i++) {
+        List<SmallTagEntity> tags = tagService.getSmallTagByCat(4);
+        for(int i=12;i<tags.size();i++) {
             songListData.getSongListData(tags.get(i).getName());
             System.out.println("tags"+tags.get(i).getName());
         }
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @RequestMapping("/songList/{page}")
+    public ResponseEntity getSongListCatFromApi(@PathVariable int page) {
+        int total=0;
+        for(int i=page;i<5909;i++) {
+            total = songListData.songCatData(i);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(total);
     }
 }

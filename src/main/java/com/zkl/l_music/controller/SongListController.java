@@ -51,6 +51,13 @@ public class SongListController {
     @PostMapping(value = "")
     public ResponseEntity addSongList(HttpServletRequest request,@RequestBody SongListEntity songListEntity) {
         String id = request.getHeader("userId");
+        if(StringUtils.isBlank(id)) {
+            id = null;
+        } else {
+            if(id.equals("undefined")) {
+                id = null;
+            }
+        }
         String res = songListService.addSongList(songListEntity.getListName(),id,1);
         if(!StringUtils.isBlank(res)) {
            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(res));
@@ -89,6 +96,13 @@ public class SongListController {
     @PutMapping(value = "/{id}/{type}/{flag}")
     public ResponseEntity likeSongList(HttpServletRequest request,@PathVariable String id,@PathVariable int flag,@PathVariable int type) {
         String userId = request.getHeader("userId");
+        if(StringUtils.isBlank(userId)) {
+            userId = null;
+        } else {
+            if(userId.equals("undefined")) {
+                userId = null;
+            }
+        }
         boolean res = songListService.updateSongListNum(id,flag,type,userId);
         if(flag == 1) {
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("已收藏到我的喜欢"));
@@ -138,6 +152,13 @@ public class SongListController {
     @GetMapping(value = "/detail/{id}")
     public ResponseEntity getUpdateSongList(HttpServletRequest request,@PathVariable String id) {
         String userId = request.getHeader("userId");
+        if(StringUtils.isBlank(userId)) {
+            userId = null;
+        } else {
+            if(userId.equals("undefined")) {
+                userId = null;
+            }
+        }
         SongListVo songListVo = songListService.getSongListById(id,userId);
         List<TagVo> tagList = tagService.getTagList();
         Map<Object,Object> res = new HashMap<>();
@@ -155,8 +176,12 @@ public class SongListController {
     public ResponseEntity getSongList(HttpServletRequest request,@PathVariable String id) {
         String userId = request.getHeader("userId");
         Map<Object,Object> res = new HashMap<>();
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             userId = null;
+        } else {
+            if(userId.equals("undefined")) {
+                userId = null;
+            }
         }
         if(id.equals("hot")) {
             List<SongListDetailVo> list = songService.getSongsByHot();
@@ -236,8 +261,12 @@ public class SongListController {
     public ResponseEntity addSongDetails(HttpServletRequest request,@RequestBody @Valid SongDetailBo songDetailBo,
                                          @PathVariable int type) {
         String userId = request.getHeader("userId");
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
+        } else {
+            if(userId.equals("undefined")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.fail(ReturnCode.NO_LOGIN));
+            }
         }
         List<SongListVo> songListEntities = songListService.getSongListByUser(userId,2);
         //收藏

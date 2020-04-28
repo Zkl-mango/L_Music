@@ -8,6 +8,7 @@ import com.zkl.l_music.vo.PageInfoVo;
 import com.zkl.l_music.vo.SingerDetailVo;
 import com.zkl.l_music.vo.SingerListVo;
 import com.zkl.l_music.vo.SongListDetailVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,8 +56,12 @@ public class SingerController {
     public ResponseEntity getSingerList(HttpServletRequest request, @PathVariable int category, @PathVariable String sex,
                                         PageBo pageBo) {
         String userId = request.getHeader("userId");
-        if(userId.equals("undefined")) {
+        if(StringUtils.isBlank(userId)) {
             userId = null;
+        } else {
+            if(userId.equals("undefined")) {
+                userId = null;
+            }
         }
         List<SingerListVo> singerListVos = singerService.getSingers(pageBo,sex,category,userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(singerListVos));

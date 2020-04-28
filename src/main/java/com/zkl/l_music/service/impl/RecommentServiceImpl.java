@@ -13,6 +13,7 @@ import com.zkl.l_music.vo.SongListDetailVo;
 import com.zkl.l_music.vo.SongListVo;
 import com.zkl.l_music.vo.SongVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class RecommentServiceImpl implements RecommentService {
     SongListService songListService;
 
     @Override
+    @Transactional
     public boolean insertNorRecomment() {
         List<SongEntity> list = songService.getSongsByRecomment();
         for(int i=0;i<list.size();i++) {
@@ -58,6 +60,7 @@ public class RecommentServiceImpl implements RecommentService {
     }
 
     @Override
+    @Transactional
     public List<SongListDetailVo> getRecommentsSong(String userId) {
         List<RecommentEntity> list = recommentDao.selectRecommentsByUser(userId,ConstantUtil.songType);
         List<SongListDetailVo> songListDetailVos = new ArrayList<>();
@@ -71,6 +74,7 @@ public class RecommentServiceImpl implements RecommentService {
     }
 
     @Override
+    @Transactional
     public List<SongListVo> getRecommentsList(String userId) {
         List<RecommentEntity> list = recommentDao.selectRecommentsByUser(userId,ConstantUtil.listType);
         List<SongListVo> songListVos = new ArrayList<>();

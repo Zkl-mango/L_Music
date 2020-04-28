@@ -8,6 +8,7 @@ import com.zkl.l_music.service.TagService;
 import com.zkl.l_music.vo.SmallTagVo;
 import com.zkl.l_music.vo.TagVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,12 +23,14 @@ public class TagServiceImpl implements TagService {
     SmallTagDao smallTagDao;
 
     @Override
+    @Transactional
     public boolean addSmallTag(SmallTagEntity smallTagEntity) {
         smallTagDao.insert(smallTagEntity);
         return true;
     }
 
     @Override
+    @Transactional
     public List<TagVo> getTagList() {
         List<BigTagEntity> bigTagList =  bigTagDao.selectAll();
         List<TagVo> categories = new ArrayList<>();
@@ -50,11 +53,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public List<SmallTagEntity> getSmallTagByCat(int category) {
         return smallTagDao.selectTagsByCategory(category);
     }
 
     @Override
+    @Transactional
     public List<SmallTagEntity> getSmallTagByHot(int hot) {
         return smallTagDao.selectTagsByHot(hot);
     }
