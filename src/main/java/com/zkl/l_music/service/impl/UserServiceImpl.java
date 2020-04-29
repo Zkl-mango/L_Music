@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
         songListEntity.setCategory(2);
         songListEntity.setListName("我喜欢");
         songListEntity.setUserId(userEntity);
+        songListEntity.setCreateTime(new Date());
         songListDao.insert(songListEntity);
         if(res == 1) {
             return userEntity;

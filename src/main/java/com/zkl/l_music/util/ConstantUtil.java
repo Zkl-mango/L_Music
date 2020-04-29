@@ -4,12 +4,14 @@ import java.util.Map;
 
 public class ConstantUtil {
     public final static String avatardownloadPath = "http://193.112.162.9:8080/avatar/";
-    public final static String avatarUpLoadPath = "C:\\Users\\zhengkunli\\Desktop\\picture";
+//    public final static String avatarUpLoadPath = "C:\\Users\\zhengkunli\\Desktop\\picture";
+    public final static String avatarUpLoadPath = "/mnt/pictures/avatar/";
     public final static String avatar = "default-avatar.png";
 
     public final static String listPic = "default.png";
     public final static String listPicdownloadPath = "http://193.112.162.9:8080/list_picture/";
-    public final static String listPicUpLoadPath = "C:\\Users\\zhengkunli\\Desktop\\picture";
+//    public final static String listPicUpLoadPath = "C:\\Users\\zhengkunli\\Desktop\\picture";
+    public final static String listPicUpLoadPath = "/mnt/pictures/listPicture/";
 
     public final static String status = "status";
     public final static String message = "message";
