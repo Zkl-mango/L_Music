@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 歌曲信息实体
@@ -144,4 +145,29 @@ public class SongEntity implements Serializable {
                 ", recommend=" + recommend +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SongEntity that = (SongEntity) o;
+        return likeNum == that.likeNum &&
+                hot == that.hot &&
+                recommend == that.recommend &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(singerId, that.singerId) &&
+                Objects.equals(albumId, that.albumId) &&
+                Objects.equals(link, that.link) &&
+                Objects.equals(picture, that.picture) &&
+                Objects.equals(lyric, that.lyric) &&
+                Objects.equals(klyric, that.klyric) &&
+                Objects.equals(category, that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() * name.hashCode();
+    }
+
 }

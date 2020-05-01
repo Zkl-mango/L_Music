@@ -60,6 +60,12 @@ public class RecommentServiceImpl implements RecommentService {
     }
 
     @Override
+    public boolean deletedAll() {
+        int res = recommentDao.deleteRecomments();
+        return true;
+    }
+
+    @Override
     @Transactional
     public List<SongListDetailVo> getRecommentsSong(String userId) {
         List<RecommentEntity> list = recommentDao.selectRecommentsByUser(userId,ConstantUtil.songType);

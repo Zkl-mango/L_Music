@@ -35,7 +35,7 @@ public class QuartzConfig {
 
     @Bean
     public Trigger quartzRecommentTrigger(){
-        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 1 * * ?");
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 1 ? * L");
         return TriggerBuilder.newTrigger().forJob(quartzRecommentDetail())
                 .withIdentity(RECOMMENT_TASK_IDENTITY)
                 .withSchedule(cronScheduleBuilder)

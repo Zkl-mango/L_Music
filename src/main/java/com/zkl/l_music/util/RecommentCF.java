@@ -30,8 +30,8 @@ public class RecommentCF {
     @Resource
     RecommentDao recommentDao;
 
-    public List<String> getUserLikeSongs(String userId){
-        List<String> songs = new ArrayList<>();
+    public List<SongEntity> getUserLikeSongs(String userId){
+        List<SongEntity> songs = new ArrayList<>();
         //计算用户个人歌单中的歌曲
         List<SongListEntity> songLists = songListDao.selectSongListByUser(userId,1);
         List<SongListEntity> songlikeLists = songListDao.selectSongListByUser(userId,2);
@@ -39,7 +39,7 @@ public class RecommentCF {
         for(int i=0;i<songLists.size();i++) {
             List<SongDetailsEntity> songDetailsEntities = songDetailsDao.selectSongDetailsByListId(songLists.get(i).getId());
             for(int j=0;j<songDetailsEntities.size();j++) {
-                songs.add(songDetailsEntities.get(j).getSongId().getId());
+                songs.add(songDetailsEntities.get(j).getSongId());
             }
         }
         //计算用户收藏的专辑和歌单中的歌曲
@@ -47,17 +47,16 @@ public class RecommentCF {
         for(int i=0;i<likeAlbumLists.size();i++) {
             List<SongEntity> songEntities = songDao.selectSongsByAlbum(likeAlbumLists.get(i).getLinkId());
             for(int j=0;j<songEntities.size();j++) {
-                songs.add(songEntities.get(j).getId());
+                songs.add(songEntities.get(j));
             }
         }
         List<LikeListEntity> likeSongLists = likeListDao.selectLikeListByType(userId,ConstantUtil.listType);
         for(int i=0;i<likeSongLists.size();i++) {
             List<SongDetailsEntity> songDetailsEntities = songDetailsDao.selectSongDetailsByListId(likeSongLists.get(i).getLinkId());
             for(int j=0;j<songDetailsEntities.size();j++) {
-                songs.add(songDetailsEntities.get(j).getSongId().getId());
+                songs.add(songDetailsEntities.get(j).getSongId());
             }
         }
-
         songs = new ArrayList<>(new HashSet<>(songs));
         return songs;
     }
@@ -68,30 +67,42 @@ public class RecommentCF {
         List<UserEntity> userList = userDao.selectAllUser();
         int[][] sparseMatrix = new int[N][N];//建立用户稀疏矩阵，用于用户相似度计算【相似度矩阵】
         Map<String, Integer> userItemLength = new HashMap<>();//存储每一个用户收藏的歌曲总数总数  eg: A 3
-        Map<String, Set<String>> itemUserCollection = new HashMap<>();//建立物品到用户的倒排表 eg: a A B
-        Set<String> items = new HashSet<>();//辅助存储物品集合
+        Map<String, Set<String>> itemUserCollection = new HashMap<>();//建立歌曲到用户的倒排表 eg: a A B
+        Set<String> items = new HashSet<>();//辅助存储歌曲集合
+        Map<String, Set<String>> itemUserCatCollection = new HashMap<>();//建立歌曲类型到用户的倒排表 eg: a A B
+        Set<String> itemcats = new HashSet<>();//辅助存储类型集合
         Map<String, Integer> userID = new HashMap<>();//辅助存储每一个用户的用户ID映射
         Map<Integer, String> idUser = new HashMap<>();//辅助存储每一个ID对应的用户映射
-        for(int i = 0; i < N ; i++){//依次处理N个用户 输入数据  以空格间隔
+        for(int i = 0; i < N ; i++){//依次处理N个用户
             String userId = userList.get(i).getId();
-            List<String> songs = getUserLikeSongs(userId);
+            List<SongEntity> songs = getUserLikeSongs(userId);
             int length = songs.size();
             userItemLength.put(userId, length);//eg: A 3
             userID.put(userId, i);//用户ID与稀疏矩阵建立对应关系
             idUser.put(i, userId);
-            //建立歌曲--用户倒排表
+            //建立歌曲--用户倒排表,类型--用户倒排表
             for(int j = 0; j < length; j ++){
-                if(items.contains(songs.get(j))){//如果已经包含歌曲id--用户映射，直接添加对应的用户
-                    itemUserCollection.get(songs.get(j)).add(userId);
+                if(items.contains(songs.get(j).getId())){//如果已经包含歌曲id--用户映射，直接添加对应的用户
+                    itemUserCollection.get(songs.get(j).getId()).add(userId);
                 }else{//否则创建对应歌曲--用户集合映射
-                    items.add(songs.get(j));
-                    itemUserCollection.put(songs.get(j), new HashSet<String>());//创建歌曲--用户倒排关系
-                    itemUserCollection.get(songs.get(j)).add(userId);
+                    items.add(songs.get(j).getId());
+                    itemUserCollection.put(songs.get(j).getId(), new HashSet<String>());//创建歌曲--用户倒排关系
+                    itemUserCollection.get(songs.get(j).getId()).add(userId);
+                }
+
+                if(itemcats.contains(songs.get(j).getCategory())){//如果已经包含类型--用户映射，直接添加对应的用户
+                    itemUserCatCollection.get(songs.get(j).getCategory()).add(userId);
+                }else{//否则创建对应歌曲--用户集合映射
+                    itemcats.add(songs.get(j).getCategory());
+                    itemUserCatCollection.put(songs.get(j).getCategory(), new HashSet<String>());//创建类型--用户倒排关系
+                    itemUserCatCollection.get(songs.get(j).getCategory()).add(userId);
                 }
             }
         }
         //计算相似度矩阵【稀疏】
-        Set<Entry<String, Set<String>>> entrySet = itemUserCollection.entrySet();
+        Set<Entry<String, Set<String>>> entrySet = new HashSet<Entry<String, Set<String>>>();
+        entrySet.addAll(itemUserCollection.entrySet());
+        entrySet.addAll(itemUserCatCollection.entrySet());
         Iterator<Entry<String, Set<String>>> iterator = entrySet.iterator();
         while(iterator.hasNext()){
             Set<String> commonUsers = iterator.next().getValue();
@@ -120,7 +131,7 @@ public class RecommentCF {
                     } else {
                         itemRecommendDegree = sparseMatrix[recommendUserId][j] / Math.sqrt(userItemLength.get(idUser.get(recommendUserId)) * userItemLength.get(idUser.get(j)));
                     }
-                    log.info(idUser.get(recommendUserId) + "--" + idUser.get(j) + "相似度:" + itemRecommendDegree);
+//                    log.info(idUser.get(recommendUserId) + "--" + idUser.get(j) + "相似度:" + itemRecommendDegree);
                     RecommentEntity recommentEntity = new RecommentEntity();
                     recommentEntity.setType(itemRecommendDegree);
                     recommentEntity.setUserId(userDao.selectById(recommendUser));
@@ -164,27 +175,40 @@ public class RecommentCF {
                     songLists.add(recommentEntity);
                 }
             }
-
+            log.info("歌单推荐完成");
             //计算指定用户recommendUser的听歌推荐度
             for(String item: items){ //遍历每一首歌曲
-                Set<String> users = itemUserCollection.get(item);//得到购买当前歌曲的所有用户集合
+                Set<String> users = itemUserCollection.get(item);//得到当前歌曲的所有用户集合
                 if(!users.contains(recommendUser)){//如果被推荐用户没有听过这首歌，则进行推荐度计算
-                    double itemRecommendDegree = 0.0;
-                    for(String user: users){
-                        if(Math.sqrt(userItemLength.get(recommendUser)*userItemLength.get(user)) == 0.0) {
-                            itemRecommendDegree = 0.0;
+                    //计算指定用户recommendUser的听歌种类
+                    for(String itemcat: itemcats) { //遍历每一个种类
+                        Set<String> useritemcats = itemUserCatCollection.get(itemcat);//得到当前种类的所有用户集合
+                        if(!useritemcats.contains(recommendUser)) {//如果被推荐用户种类和这个歌不匹配，则跳过
+                            continue;
                         } else {
-                            itemRecommendDegree += sparseMatrix[userID.get(recommendUser)][userID.get(user)] / Math.sqrt(userItemLength.get(recommendUser) * userItemLength.get(user));//推荐度计算
+                            SongEntity songEntity = songDao.selectById(item);
+                            if(!songEntity.getCategory().contains(itemcat)){
+                                continue;
+                            } else {
+                                double itemRecommendDegree = 0.0;
+                                for(String user: users){
+                                    if(Math.sqrt(userItemLength.get(recommendUser)*userItemLength.get(user)) == 0.0) {
+                                        itemRecommendDegree = 0.0;
+                                    } else {
+                                        itemRecommendDegree += sparseMatrix[userID.get(recommendUser)][userID.get(user)] / Math.sqrt(userItemLength.get(recommendUser) * userItemLength.get(user));//推荐度计算
+                                    }
+                                }
+//                                log.info("The song "+item+" for "+recommendUser +"'s recommended degree:"+itemRecommendDegree);
+                                RecommentEntity recommentEntity = new RecommentEntity();
+                                recommentEntity.setId(uuidGenerator.generateUUID());
+                                recommentEntity.setType(itemRecommendDegree);
+                                recommentEntity.setLinkId(item);
+                                recommentEntity.setLinkType(ConstantUtil.songType);
+                                recommentEntity.setUserId(userDao.selectById(recommendUser));
+                                songIds.add(recommentEntity);
+                            }
                         }
                     }
-                   log.info("The song "+item+" for "+recommendUser +"'s recommended degree:"+itemRecommendDegree);
-                    RecommentEntity recommentEntity = new RecommentEntity();
-                    recommentEntity.setId(uuidGenerator.generateUUID());
-                    recommentEntity.setType(itemRecommendDegree);
-                    recommentEntity.setLinkId(item);
-                    recommentEntity.setLinkType(ConstantUtil.songType);
-                    recommentEntity.setUserId(userDao.selectById(recommendUser));
-                    songIds.add(recommentEntity);
                 }
             }
             //根据推荐度排序
@@ -222,6 +246,7 @@ public class RecommentCF {
                     recommentDao.insert(songIds.get(k));
                 }
             }
+            log.info("歌曲推荐完成");
         }
     }
 

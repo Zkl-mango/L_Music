@@ -10,6 +10,8 @@ public interface RecommentService {
 
     boolean insertNorRecomment();
 
+    boolean deletedAll();
+
     List<SongListDetailVo> getRecommentsSong(String userId);
 
     List<SongListVo> getRecommentsList(String userId);
