@@ -102,7 +102,7 @@ public class RecommentCF {
         //计算相似度矩阵【稀疏】
         Set<Entry<String, Set<String>>> entrySet = new HashSet<Entry<String, Set<String>>>();
         entrySet.addAll(itemUserCollection.entrySet());
-        entrySet.addAll(itemUserCatCollection.entrySet());
+        entrySet.retainAll(itemUserCatCollection.entrySet());
         Iterator<Entry<String, Set<String>>> iterator = entrySet.iterator();
         while(iterator.hasNext()){
             Set<String> commonUsers = iterator.next().getValue();
